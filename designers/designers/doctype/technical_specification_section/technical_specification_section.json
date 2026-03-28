@@ -1,0 +1,86 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "DPR-TSS-.YYYY.-.####",
+ "creation": "2026-03-27 07:56:07.705338",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "techincal_specification",
+  "section_name",
+  "\u0432\u044b\u0431\u043e\u0440_\u0438\u0441\u0442\u043e\u0447\u0438\u043a\u0430",
+  "content",
+  "assigned_to",
+  "status",
+  "sort_order"
+ ],
+ "fields": [
+  {
+   "fieldname": "techincal_specification",
+   "fieldtype": "Link",
+   "label": "\u0422\u0435\u0445\u043d\u0438\u0447\u0435\u0441\u043a\u043e\u0435 \u0437\u0430\u0434\u0430\u043d\u0438\u0435",
+   "options": "Technical specification"
+  },
+  {
+   "fieldname": "section_name",
+   "fieldtype": "Data",
+   "label": "\u0420\u0430\u0437\u0434\u0435\u043b"
+  },
+  {
+   "fieldname": "\u0432\u044b\u0431\u043e\u0440_\u0438\u0441\u0442\u043e\u0447\u0438\u043a\u0430",
+   "fieldtype": "Select",
+   "label": "\u0412\u044b\u0431\u043e\u0440 \u0438\u0441\u0442\u043e\u0447\u0438\u043a\u0430",
+   "options": "UI\n\u0411\u0435\u043a\u0435\u043d\u0434\nAPI"
+  },
+  {
+   "fieldname": "content",
+   "fieldtype": "Text Editor",
+   "label": "\u0421\u043e\u0434\u0435\u0440\u0436\u0430\u043d\u0438\u0435"
+  },
+  {
+   "fieldname": "assigned_to",
+   "fieldtype": "Link",
+   "label": "\u041e\u0442\u0432\u0435\u0442\u0441\u0442\u0432\u0435\u043d\u043d\u0439",
+   "options": "User"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "\u0421\u0442\u0430\u0442\u0443\u0441",
+   "options": "\u0427\u0435\u0440\u043d\u043e\u0432\u0438\u043a\n\u0412\u0435\u0440\u0441\u0438\u044f \u0433\u043e\u0442\u043e\u0432\u0430"
+  },
+  {
+   "fieldname": "sort_order",
+   "fieldtype": "Int",
+   "label": "\u041f\u043e\u0440\u044f\u0434\u043e\u043a \u0432\u044b\u0432\u043e\u0434\u0430"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-03-27 08:07:16.569709",
+ "modified_by": "Administrator",
+ "module": "Designers",
+ "name": "Technical Specification Section",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
