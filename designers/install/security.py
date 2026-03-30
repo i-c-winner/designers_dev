@@ -103,43 +103,12 @@ WORKFLOWS = {
             ("Proposal Approved", "Send To Client", "Sent to Client", "Biz User"),
         ],
     },
-    "Tender Budget Approval Workflow": {
-        "doctype": "Tender Budget",
-        "state_field": "status",
-        "states": [
-            ("Draft", "Biz User"),
-            ("Under Director Review", "Biz Manager"),
-            ("Under CEO Review", "Biz Admin"),
-            ("Approved", "Biz Admin"),
-            ("Rejected", "Biz Manager"),
-            ("Archived", "Biz User"),
-        ],
-        "transitions": [
-            ("Draft", "Submit For Director", "Under Director Review", "Biz User"),
-            ("Under Director Review", "Approve Director", "Under CEO Review", "Biz Manager"),
-            ("Under Director Review", "Reject Budget", "Rejected", "Biz Manager"),
-            ("Under CEO Review", "Approve Budget Final", "Approved", "Biz Admin"),
-            ("Under CEO Review", "Reject By CEO", "Rejected", "Biz Admin"),
-        ],
-    },
-    "Commercial Proposal Approval Workflow": {
-        "doctype": "Commercial Proposal",
-        "state_field": "status",
-        "states": [
-            ("Draft", "Biz User"),
-            ("Under Approval", "Biz Manager"),
-            ("Approved", "Biz Admin"),
-            ("Sent", "Biz User"),
-            ("Rejected", "Biz Manager"),
-        ],
-        "transitions": [
-            ("Draft", "Submit Proposal For Approval", "Under Approval", "Biz User"),
-            ("Under Approval", "Approve Proposal Final", "Approved", "Biz Manager"),
-            ("Under Approval", "Reject Proposal", "Rejected", "Biz Manager"),
-            ("Approved", "Send Proposal To Client", "Sent", "Biz User"),
-        ],
-    },
 }
+
+LEGACY_WORKFLOWS = (
+    "Tender Budget Approval Workflow",
+    "Commercial Proposal Approval Workflow",
+)
 
 
 def apply_security_governance() -> None:
@@ -417,6 +386,17 @@ def _upsert_workflow(name: str, definition: dict) -> None:
 
 
 def ensure_workflows() -> None:
+    # Variant 1: single source workflow lives on Tender Request.
+    # Child DocTypes (Tender Budget / Commercial Proposal) should not carry separate approval workflows.
+    for legacy_name in LEGACY_WORKFLOWS:
+        if not frappe.db.exists("Workflow", legacy_name):
+            continue
+        try:
+            frappe.delete_doc("Workflow", legacy_name, ignore_permissions=True, force=1)
+        except Exception:
+            # Fallback: keep record but disable it so it never controls transitions.
+            frappe.db.set_value("Workflow", legacy_name, "is_active", 0, update_modified=False)
+
     for workflow_name, definition in WORKFLOWS.items():
         _upsert_workflow(workflow_name, definition)
 
