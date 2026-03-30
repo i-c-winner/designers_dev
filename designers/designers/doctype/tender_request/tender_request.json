@@ -1,0 +1,209 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:TR-{YYYY}-{#####}",
+ "creation": "2026-03-28 16:00:00",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "section_main",
+  "connect_user",
+  "contact_phone",
+  "project_name",
+  "request_date",
+  "project_prefix",
+  "project_type",
+  "client",
+  "source",
+  "website_request_id",
+  "description",
+  "description_from_client",
+  "column_break_main",
+  "deadline",
+  "status",
+  "assigned_to",
+  "budget_version",
+  "rejection_reason",
+  "files"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_main",
+   "fieldtype": "Section Break",
+   "label": "Main"
+  },
+  {
+   "fieldname": "project_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Project Name",
+   "read_only": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "request_date",
+   "fieldtype": "Date",
+   "label": "Request Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "project_prefix",
+   "fieldtype": "Data",
+   "label": "Project Prefix"
+  },
+  {
+   "fieldname": "project_type",
+   "fieldtype": "Select",
+   "label": "Project Type",
+   "options": "Architecture\nInterior\nBranding\nGraphic\nOther"
+  },
+  {
+   "fieldname": "client",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Client",
+   "options": "Customer"
+  },
+  {
+   "default": "Internal",
+   "fieldname": "source",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Source",
+   "options": "Internal\nWebsite"
+  },
+  {
+   "fieldname": "website_request_id",
+   "fieldtype": "Data",
+   "label": "Website Request ID"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description",
+   "options": "dsfdsfsdf"
+  },
+  {
+   "fieldname": "column_break_main",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "deadline",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Deadline"
+  },
+  {
+   "default": "New Request",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "New Request\nIn Progress\nUnder Review\nRejected\nBudget Drafting\nBudget Director Review\nBudget CEO Review\nBudget Approved\nProposal Drafting\nProposal Review\nProposal Approved\nSent to Client"
+  },
+  {
+   "fieldname": "assigned_to",
+   "fieldtype": "Link",
+   "label": "Assigned To",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "budget_version",
+   "fieldtype": "Int",
+   "label": "Budget Version",
+   "read_only": 1
+  },
+  {
+   "fieldname": "rejection_reason",
+   "fieldtype": "Text",
+   "label": "Rejection Reason"
+  },
+  {
+   "fieldname": "connect_user",
+   "fieldtype": "Data",
+   "label": "\u041a\u043e\u043d\u0442\u0430\u043a\u0442\u043d\u043e\u0435 \u043b\u0438\u0446\u043e",
+   "reqd": 1
+  },
+  {
+   "fieldname": "contact_phone",
+   "fieldtype": "Data",
+   "label": "\u041a\u043e\u043d\u0442\u0430\u043a\u0442\u043d\u044b\u0439 \u0442\u0435\u043b\u0435\u0444\u043e\u043d",
+   "reqd": 1
+  },
+  {
+   "fieldname": "description_from_client",
+   "fieldtype": "Small Text",
+   "label": "\u041e\u043f\u0438\u0441\u0430\u043d\u0438\u0435"
+  },
+  {
+   "fieldname": "files",
+   "fieldtype": "Attach",
+   "label": "\u0424\u0430\u0439\u043b\u044b"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [
+  {
+   "group": "Documents",
+   "link_doctype": "Tender Budget",
+   "link_fieldname": "tender_request"
+  },
+  {
+   "group": "Documents",
+   "link_doctype": "Commercial Proposal",
+   "link_fieldname": "tender_request"
+  }
+ ],
+ "modified": "2026-03-29 17:09:22.009445",
+ "modified_by": "Administrator",
+ "module": "Designers",
+ "name": "Tender Request",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Design Director",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "CEO",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Website User"
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

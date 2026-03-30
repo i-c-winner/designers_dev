@@ -1,0 +1,81 @@
+{
+ "app": "designers",
+ "charts": [],
+ "content": "[{\"id\":\"designers_header\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Designers</b></span>\",\"col\":12}},{\"id\":\"designers_shortcut_tender_request\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Tender Request\",\"col\":4}},{\"id\":\"designers_shortcut_tender_budget\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Tender Budget\",\"col\":4}},{\"id\":\"designers_shortcut_commercial_proposal\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Commercial Proposal\",\"col\":4}},{\"id\":\"designers_card_links\",\"type\":\"card\",\"data\":{\"card_name\":\"Link\",\"col\":12}}]",
+ "creation": "2026-03-30 11:15:00",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "folder-normal",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "Designers",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Tender Request",
+   "link_count": 0,
+   "link_to": "Tender Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Tender Budget",
+   "link_count": 0,
+   "link_to": "Tender Budget",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Commercial Proposal",
+   "link_count": 0,
+   "link_to": "Commercial Proposal",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-03-30 13:10:58.191523",
+ "modified_by": "Administrator",
+ "module": "Designers",
+ "name": "Designers",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "restrict_to_domain": "",
+ "roles": [],
+ "sequence_id": 1.0,
+ "shortcuts": [
+  {
+   "doc_view": "List",
+   "label": "Tender Request",
+   "link_to": "Tender Request",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Tender Budget",
+   "link_to": "Tender Budget",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Commercial Proposal",
+   "link_to": "Commercial Proposal",
+   "type": "DocType"
+  }
+ ],
+ "title": "Designers",
+ "type": "Workspace"
+}

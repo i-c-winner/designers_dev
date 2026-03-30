@@ -4,3 +4,9 @@
 
 [post_model_sync]
 # Patches added in this section will be executed after doctypes are migrated
+designers.patches.v0_0_3_security_governance
+designers.patches.v0_0_4_enable_guest_uploads
+designers.patches.v0_0_5_webform_phone_client_validation
+designers.patches.v0_0_6_ensure_workspace_sidebar
+designers.patches.v0_0_7_fix_workspace_sidebar_for_user_null
+designers.patches.v0_0_8_archive_old_tender_budget_versions

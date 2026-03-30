@@ -1,0 +1,27 @@
+{% extends "templates/web.html" %}
+
+{% block page_content %}
+<h2>My Tenders</h2>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Project</th>
+      <th>Status</th>
+      <th>Deadline</th>
+      <th>Source</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for t in tenders %}
+    <tr>
+      <td>{{ t.name }}</td>
+      <td>{{ t.project_name }}</td>
+      <td>{{ t.status }}</td>
+      <td>{{ t.deadline }}</td>
+      <td>{{ t.source }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

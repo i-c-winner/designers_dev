@@ -1,0 +1,80 @@
+[
+ {
+  "desk_access": 1,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Role",
+  "home_page": null,
+  "is_custom": 0,
+  "modified": "2026-03-28 15:34:16.252549",
+  "name": "Design Director",
+  "restrict_to_domain": null,
+  "role_name": "Design Director",
+  "two_factor_auth": 0
+ },
+ {
+  "desk_access": 1,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Role",
+  "home_page": null,
+  "is_custom": 0,
+  "modified": "2026-03-28 15:34:16.278280",
+  "name": "Website User",
+  "restrict_to_domain": null,
+  "role_name": "Website User",
+  "two_factor_auth": 0
+ },
+ {
+  "desk_access": 1,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Role",
+  "home_page": null,
+  "is_custom": 0,
+  "modified": "2026-03-28 19:40:13.232823",
+  "name": "Biz User",
+  "restrict_to_domain": null,
+  "role_name": "Biz User",
+  "two_factor_auth": 0
+ },
+ {
+  "desk_access": 1,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Role",
+  "home_page": null,
+  "is_custom": 0,
+  "modified": "2026-03-28 19:40:13.256612",
+  "name": "Biz Manager",
+  "restrict_to_domain": null,
+  "role_name": "Biz Manager",
+  "two_factor_auth": 0
+ },
+ {
+  "desk_access": 1,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Role",
+  "home_page": null,
+  "is_custom": 0,
+  "modified": "2026-03-28 19:40:13.258164",
+  "name": "Biz Admin",
+  "restrict_to_domain": null,
+  "role_name": "Biz Admin",
+  "two_factor_auth": 0
+ },
+ {
+  "desk_access": 1,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Role",
+  "home_page": null,
+  "is_custom": 0,
+  "modified": "2026-03-28 19:40:13.259450",
+  "name": "Integration User",
+  "restrict_to_domain": null,
+  "role_name": "Integration User",
+  "two_factor_auth": 0
+ }
+]

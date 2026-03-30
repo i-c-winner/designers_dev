@@ -1,0 +1,110 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "remove",
+  "modified": "2026-03-25 15:34:33.859384",
+  "name": "Rejected",
+  "style": "Danger",
+  "workflow_state_name": "Rejected"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-03-28 15:34:16.283182",
+  "name": "New Request",
+  "style": "Primary",
+  "workflow_state_name": "New Request"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-03-28 15:34:16.284054",
+  "name": "In Progress",
+  "style": "Primary",
+  "workflow_state_name": "In Progress"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-03-28 15:34:16.284663",
+  "name": "Under Review",
+  "style": "Primary",
+  "workflow_state_name": "Under Review"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-03-28 15:34:16.320634",
+  "name": "Budget Drafting",
+  "style": "Primary",
+  "workflow_state_name": "Budget Drafting"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-03-28 15:34:16.321147",
+  "name": "Budget Director Review",
+  "style": "Primary",
+  "workflow_state_name": "Budget Director Review"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-03-28 15:34:16.321619",
+  "name": "Budget CEO Review",
+  "style": "Primary",
+  "workflow_state_name": "Budget CEO Review"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-03-28 15:34:16.322083",
+  "name": "Budget Approved",
+  "style": "Primary",
+  "workflow_state_name": "Budget Approved"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-03-28 15:34:16.322531",
+  "name": "Proposal Drafting",
+  "style": "Primary",
+  "workflow_state_name": "Proposal Drafting"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-03-28 15:34:16.322993",
+  "name": "Proposal Review",
+  "style": "Primary",
+  "workflow_state_name": "Proposal Review"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-03-28 15:34:16.323431",
+  "name": "Proposal Approved",
+  "style": "Primary",
+  "workflow_state_name": "Proposal Approved"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-03-28 15:34:16.323881",
+  "name": "Sent to Client",
+  "style": "Primary",
+  "workflow_state_name": "Sent to Client"
+ }
+]

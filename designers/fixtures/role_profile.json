@@ -1,0 +1,104 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Role Profile",
+  "modified": "2026-03-28 19:40:13.267045",
+  "name": "RP Accountant",
+  "role_profile": "RP Accountant",
+  "roles": [
+   {
+    "role": "Accounts User"
+   },
+   {
+    "role": "Biz User"
+   }
+  ]
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Role Profile",
+  "modified": "2026-03-28 19:40:13.286138",
+  "name": "RP Sales",
+  "role_profile": "RP Sales",
+  "roles": [
+   {
+    "role": "Sales User"
+   },
+   {
+    "role": "Biz User"
+   }
+  ]
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Role Profile",
+  "modified": "2026-03-28 19:40:13.288136",
+  "name": "RP Purchase",
+  "role_profile": "RP Purchase",
+  "roles": [
+   {
+    "role": "Purchase User"
+   },
+   {
+    "role": "Biz User"
+   }
+  ]
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Role Profile",
+  "modified": "2026-03-28 19:40:13.290090",
+  "name": "RP Stock",
+  "role_profile": "RP Stock",
+  "roles": [
+   {
+    "role": "Stock User"
+   },
+   {
+    "role": "Biz User"
+   }
+  ]
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Role Profile",
+  "modified": "2026-03-28 19:40:13.291876",
+  "name": "RP HR",
+  "role_profile": "RP HR",
+  "roles": [
+   {
+    "role": "HR User"
+   },
+   {
+    "role": "Biz User"
+   }
+  ]
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Role Profile",
+  "modified": "2026-03-28 19:40:13.295439",
+  "name": "RP Integration",
+  "role_profile": "RP Integration",
+  "roles": [
+   {
+    "role": "Integration User"
+   }
+  ]
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Role Profile",
+  "modified": "2026-03-28 19:40:13.293566",
+  "name": "RP Admin",
+  "role_profile": "RP Admin",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "Biz Admin"
+   }
+  ]
+ }
+]

@@ -1,0 +1,79 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-03-29 00:06:48.612185",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "your_company",
+  "your_name",
+  "your_phone",
+  "your_email",
+  "content",
+  "attach"
+ ],
+ "fields": [
+  {
+   "fieldname": "your_company",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": " \u0412\u0430\u0448\u0430 \u043a\u043e\u043c\u043f\u0430\u043d\u0438\u044f",
+   "reqd": 1
+  },
+  {
+   "fieldname": "your_name",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "\u0412\u0430\u0448\u0435 \u0438\u043c\u044f",
+   "reqd": 1
+  },
+  {
+   "fieldname": "your_phone",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "\u0412\u0430\u0448 \u0442\u0435\u043b\u0435\u0444\u043e\u043d",
+   "reqd": 1
+  },
+  {
+   "fieldname": "your_email",
+   "fieldtype": "Small Text",
+   "label": "\u0412\u0430\u0448\u0430 \u043f\u043e\u0447\u0442\u0430"
+  },
+  {
+   "fieldname": "content",
+   "fieldtype": "Small Text"
+  },
+  {
+   "fieldname": "attach",
+   "fieldtype": "Attach",
+   "label": "\u041f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u044f "
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-03-29 00:56:49.250577",
+ "modified_by": "Administrator",
+ "module": "Designers",
+ "name": "Tender From Guest",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
