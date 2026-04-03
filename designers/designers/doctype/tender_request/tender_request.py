@@ -4,18 +4,59 @@ import re
 
 import frappe
 from frappe.model.document import Document
+from frappe.model.workflow import apply_workflow, get_transitions
+from frappe.utils import now
 
-from designers.services.notification_service import notify_status_change
+from designers.permissions.common import get_roles, is_super_user, user_has_tender_access
 from designers.services.tender_service import assign_next_user, create_project_structure, make_project_name
 
 PHONE_REGEX = re.compile(r"^\+7-(?:\d{3}|\(\d{3}\))-\d{3}-\d{2}-\d{2}$")
 PHONE_HINT = "Формат телефона: +7-999-123-45-67 или +7-(999)-123-45-67"
+INITIAL_WORKFLOW_STATUS = "New Request"
+LOCKED_FIELDS_AFTER_FIRST_ACTION = {
+    "contact_name",
+    "contact_phone",
+    "project_name",
+    "request_date",
+    "project_prefix",
+    "project_type",
+    "client",
+    "source",
+    "website_request_id",
+    "deadline",
+    "description",
+}
 
 
 class TenderRequest(Document):
     def validate(self):
         if self.contact_phone and not PHONE_REGEX.fullmatch(self.contact_phone.strip()):
             frappe.throw(PHONE_HINT)
+        self._validate_locked_fields_after_first_action()
+
+    def _validate_locked_fields_after_first_action(self):
+        if self.is_new():
+            return
+
+        previous = self.get_doc_before_save()
+        if not previous:
+            return
+
+        # Editing is allowed while the document is still in the very first status.
+        # Once it leaves New Request, business fields become immutable.
+        if previous.status == INITIAL_WORKFLOW_STATUS:
+            return
+
+        changed = [
+            field
+            for field in LOCKED_FIELDS_AFTER_FIRST_ACTION
+            if (previous.get(field) or "") != (self.get(field) or "")
+        ]
+        if changed:
+            frappe.throw(
+                "После первого workflow-действия поля заявки нельзя изменять: "
+                + ", ".join(sorted(changed))
+            )
 
     def before_insert(self):
         if not self.source and frappe.session.user == "Guest":
@@ -35,41 +76,282 @@ class TenderRequest(Document):
 
     def on_update(self):
         assign_next_user(self)
-        notify_status_change(self)
+
+
+def _get_latest_child(doctype: str, tender_request: str):
+    name = frappe.db.get_value(
+        doctype,
+        {"tender_request": tender_request},
+        "name",
+        order_by="creation desc",
+    )
+    if not name:
+        return None
+    return frappe.get_doc(doctype, name)
+
+
+def _apply_child_workflow_action(doc, action: str):
+    return apply_workflow(doc, action)
+
+
+def _normalize_access_users(users) -> list[str]:
+    if users is None:
+        return []
+    if isinstance(users, str):
+        users = frappe.parse_json(users)
+
+    normalized = []
+    seen = set()
+    for item in users or []:
+        user = item.get("user") if isinstance(item, dict) else item
+        user = (user or "").strip()
+        if not user or user in {"Guest", "Administrator"}:
+            continue
+        if user in seen:
+            continue
+        if not frappe.db.get_value("User", user, "name"):
+            continue
+        seen.add(user)
+        normalized.append(user)
+    return normalized
+
+
+def _replace_access_users(tender_request: str, users: list[str]) -> None:
+    frappe.db.delete(
+        "Tender Request Access User",
+        {"parent": tender_request, "parenttype": "Tender Request", "parentfield": "access_users"},
+    )
+    ts = now()
+    for idx, user in enumerate(users, start=1):
+        frappe.db.sql(
+            """
+            insert into `tabTender Request Access User`
+            (`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`user`,`parent`,`parentfield`,`parenttype`)
+            values (%s,%s,%s,%s,%s,0,%s,%s,%s,'access_users','Tender Request')
+            """,
+            (
+                frappe.generate_hash(length=10),
+                ts,
+                ts,
+                frappe.session.user,
+                frappe.session.user,
+                idx,
+                user,
+                tender_request,
+            ),
+        )
+    frappe.db.sql(
+        """
+        update `tabTender Request`
+        set modified = %s, modified_by = %s
+        where name = %s
+        """,
+        (ts, frappe.session.user, tender_request),
+    )
+    frappe.clear_document_cache("Tender Request", tender_request)
+
+
+@frappe.whitelist()
+def update_access_users(tender_request: str, users=None):
+    current_user = frappe.session.user
+    if current_user == "Guest":
+        frappe.throw("Not permitted", frappe.PermissionError)
+
+    roles = get_roles(current_user)
+    can_edit = is_super_user(current_user, roles) or ("Biz Manager" in roles)
+    if not can_edit:
+        frappe.throw("Not permitted", frappe.PermissionError)
+
+    normalized = _normalize_access_users(users)
+    _replace_access_users(tender_request, normalized)
+    return {"name": tender_request, "access_users": normalized}
+
+
+def _has_workflow_action(doc, action: str) -> bool:
+    if not doc:
+        return False
+    try:
+        transitions = get_transitions(doc)
+    except Exception:
+        return False
+    return any((t.get("action") or "").strip() == action for t in transitions)
+
+
+@frappe.whitelist()
+def get_action_visibility(tender_request: str):
+    tr = frappe.get_doc("Tender Request", tender_request)
+    user = frappe.session.user
+    roles = get_roles(user)
+    is_biz_user = "Biz User" in roles
+
+    can_create_budget_statuses = {
+        "New Request",
+        "In Progress",
+        "Under Review",
+        "Budget Drafting",
+        "Budget Director Review",
+        "Budget CEO Review",
+        "Rejected",
+    }
+    can_create_proposal_statuses = {
+        "Budget Approved",
+        "Proposal Drafting",
+        "Proposal Review",
+        "Rejected",
+    }
+
+    latest_budget = _get_latest_child("Tender Budget", tr.name)
+    latest_proposal = _get_latest_child("Commercial Proposal", tr.name)
+
+    can_create_budget = (
+        is_biz_user
+        and
+        frappe.has_permission("Tender Budget", ptype="create", user=user)
+        and tr.status in can_create_budget_statuses
+    )
+    can_create_proposal = (
+        is_biz_user
+        and
+        frappe.has_permission("Commercial Proposal", ptype="create", user=user)
+        and tr.status in can_create_proposal_statuses
+        and bool(
+            frappe.db.get_value(
+                "Tender Budget",
+                {"tender_request": tr.name, "status": "Approved"},
+                "name",
+            )
+        )
+    )
+
+    return {
+        "edit_access": is_super_user(user, roles) or ("Biz Manager" in roles),
+        "create_budget": can_create_budget,
+        "send_budget_to_director": _has_workflow_action(latest_budget, "Send To Director"),
+        "approve_director": _has_workflow_action(latest_budget, "Approve Director"),
+        "approve_budget": _has_workflow_action(latest_budget, "Approve Budget"),
+        "create_proposal": can_create_proposal,
+        "submit_proposal": _has_workflow_action(latest_proposal, "Submit Proposal"),
+        "approve_proposal": _has_workflow_action(latest_proposal, "Approve Proposal"),
+        "send_to_admin": _has_workflow_action(latest_proposal, "Send To Admin"),
+        "approve_by_admin": _has_workflow_action(latest_proposal, "Approve By Admin"),
+        "send_to_client": _has_workflow_action(latest_proposal, "Send To Client"),
+    }
+
+
+@frappe.whitelist()
+def create_budget_for_request(tender_request: str):
+    tr = frappe.get_doc("Tender Request", tender_request)
+    budget = frappe.get_doc(
+        {
+            "doctype": "Tender Budget",
+            "tender_request": tr.name,
+            "status": "Draft",
+        }
+    ).insert()
+    return {"name": budget.name, "status": budget.status}
+
+
+@frappe.whitelist()
+def send_budget_to_director(tender_request: str):
+    budget = _get_latest_child("Tender Budget", tender_request)
+    if not budget:
+        frappe.throw("Создайте Tender Budget перед отправкой директору")
+    updated = _apply_child_workflow_action(budget, "Send To Director")
+    return {"name": updated.name, "status": updated.status}
+
+
+@frappe.whitelist()
+def approve_budget_director(tender_request: str):
+    budget = _get_latest_child("Tender Budget", tender_request)
+    if not budget:
+        frappe.throw("Tender Budget не найден")
+    updated = _apply_child_workflow_action(budget, "Approve Director")
+    return {"name": updated.name, "status": updated.status}
+
+
+@frappe.whitelist()
+def approve_budget_ceo(tender_request: str):
+    budget = _get_latest_child("Tender Budget", tender_request)
+    if not budget:
+        frappe.throw("Tender Budget не найден")
+    updated = _apply_child_workflow_action(budget, "Approve Budget")
+    return {"name": updated.name, "status": updated.status}
+
+
+@frappe.whitelist()
+def create_proposal_for_request(tender_request: str):
+    budget = frappe.db.get_value(
+        "Tender Budget",
+        {"tender_request": tender_request, "status": "Approved"},
+        "name",
+        order_by="version desc",
+    )
+    if not budget:
+        frappe.throw("Сначала согласуйте Tender Budget (status = Approved)")
+
+    proposal_data = {
+        "doctype": "Commercial Proposal",
+        "tender_request": tender_request,
+        "status": "Draft",
+    }
+    proposal_meta = frappe.get_meta("Commercial Proposal")
+    if proposal_meta.has_field("tender_budget"):
+        proposal_data["tender_budget"] = budget
+    if proposal_meta.has_field("budget_version"):
+        proposal_data["budget_version"] = frappe.db.get_value("Tender Budget", budget, "version")
+
+    proposal = frappe.get_doc(proposal_data).insert()
+    return {"name": proposal.name, "status": proposal.status}
+
+
+@frappe.whitelist()
+def submit_proposal_for_approval(tender_request: str):
+    proposal = _get_latest_child("Commercial Proposal", tender_request)
+    if not proposal:
+        frappe.throw("Commercial Proposal не найден")
+    updated = _apply_child_workflow_action(proposal, "Submit Proposal")
+    return {"name": updated.name, "status": updated.status}
+
+
+@frappe.whitelist()
+def approve_proposal(tender_request: str):
+    proposal = _get_latest_child("Commercial Proposal", tender_request)
+    if not proposal:
+        frappe.throw("Commercial Proposal не найден")
+    updated = _apply_child_workflow_action(proposal, "Approve Proposal")
+    return {"name": updated.name, "status": updated.status}
+
+
+@frappe.whitelist()
+def send_proposal_to_admin(tender_request: str):
+    proposal = _get_latest_child("Commercial Proposal", tender_request)
+    if not proposal:
+        frappe.throw("Commercial Proposal не найден")
+    updated = _apply_child_workflow_action(proposal, "Send To Admin")
+    return {"name": updated.name, "status": updated.status}
+
+
+@frappe.whitelist()
+def approve_proposal_by_admin(tender_request: str):
+    proposal = _get_latest_child("Commercial Proposal", tender_request)
+    if not proposal:
+        frappe.throw("Commercial Proposal не найден")
+    updated = _apply_child_workflow_action(proposal, "Approve By Admin")
+    return {"name": updated.name, "status": updated.status}
 
 
 @frappe.whitelist()
 def send_to_client(tender_request: str):
-    doc = frappe.get_doc("Tender Request", tender_request)
-
-    if not doc.client:
-        frappe.throw("Customer is required to send proposal")
-
-    recipients = []
-    customer_contacts = frappe.db.sql(
-        """
-        select ce.email_id
-        from `tabContact Email` ce
-        inner join `tabDynamic Link` dl on dl.parent = ce.parent and dl.parenttype = 'Contact'
-        where dl.link_doctype = 'Customer'
-          and dl.link_name = %s
-          and ifnull(ce.is_primary, 0) = 1
-        limit 1
-        """,
-        (doc.client,),
-        as_dict=True,
+    proposal = frappe.db.get_value(
+        "Commercial Proposal",
+        {"tender_request": tender_request, "status": "Admin Approved"},
+        "name",
+        order_by="creation desc",
     )
-    if customer_contacts:
-        recipients.append(customer_contacts[0].email_id)
+    if not proposal:
+        frappe.throw("Сначала завершите админ-согласование Commercial Proposal (status = Admin Approved)")
 
-    if recipients:
-        frappe.sendmail(
-            recipients=recipients,
-            subject=f"Commercial proposal for {doc.project_name}",
-            message=f"Tender {doc.name} has a new commercial proposal.",
-            now=False,
-        )
+    from designers.designers.doctype.commercial_proposal.commercial_proposal import send_to_client as send_proposal
 
-    doc.status = "Sent to Client"
-    doc.save(ignore_permissions=True)
-    return {"name": doc.name, "status": doc.status}
+    result = send_proposal(proposal)
+    return {"proposal": result.get("proposal"), "status": result.get("status")}

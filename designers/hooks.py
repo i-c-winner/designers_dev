@@ -7,14 +7,23 @@ app_license = "mit"
 
 required_apps = ["frappe"]
 
+app_include_js = ["/assets/designers/js/notification_badge.js"]
+app_include_css = ["/assets/designers/css/notification_badge.css"]
+
 doctype_js = {
     "Tender Request": "public/js/tender_request.js",
 }
 
-doc_events = {
-    "Tender From Guest": {
-        "after_insert": "designers.api.notifications.notify_manager",
-    },
+permission_query_conditions = {
+    "Tender Request": "designers.permissions.tender_request.permission_query_conditions",
+    "Tender Budget": "designers.permissions.tender_budget.permission_query_conditions",
+    "Commercial Proposal": "designers.permissions.commercial_proposal.permission_query_conditions",
+}
+
+has_permission = {
+    "Tender Request": "designers.permissions.tender_request.has_permission",
+    "Tender Budget": "designers.permissions.tender_budget.has_permission",
+    "Commercial Proposal": "designers.permissions.commercial_proposal.has_permission",
 }
 
 scheduler_events = {
@@ -29,8 +38,19 @@ after_migrate = "designers.install.setup.after_migrate"
 
 # Source of truth for roles/workflows/permissions is Python code in designers.install.security.
 # Keep fixtures disabled for these entities to avoid drift/conflicts.
-fixtures = []
+fixtures = [
+    {
+        "doctype": "Print Format",
+        "filters": [["doc_type", "=", "Commercial Proposal"]],
+    }
+]
 
 override_whitelisted_methods = {
     "frappe.handler.upload_file": "designers.upload.restricted_upload_file"
+}
+
+jinja = {
+    "methods": [
+        "designers.utils.print_format.loads_json",
+    ],
 }

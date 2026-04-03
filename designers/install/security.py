@@ -17,7 +17,7 @@ ROLE_PROFILES = {
     "RP Purchase": ["Purchase User", "Biz User"],
     "RP Stock": ["Stock User", "Biz User"],
     "RP HR": ["HR User", "Biz User"],
-    "RP Admin": ["System Manager", "Biz Admin"],
+    "RP Admin": ["System Manager", "Biz Admin", "Biz Manager", "Biz User"],
     "RP Integration": ["Integration User"],
 }
 
@@ -83,24 +83,66 @@ WORKFLOWS = {
             ("Budget Approved", "Biz Admin"),
             ("Proposal Drafting", "Biz User"),
             ("Proposal Review", "Biz Manager"),
-            ("Proposal Approved", "Biz Admin"),
+            ("Proposal Approved", "Biz Manager"),
             ("Sent to Client", "Biz User"),
+            ("Archived", "Biz Manager"),
         ],
         "transitions": [
             ("New Request", "Start Work", "In Progress", "Biz User"),
             ("In Progress", "Send For Review", "Under Review", "Biz User"),
             ("Under Review", "Reject Request", "Rejected", "Biz Manager"),
             ("Under Review", "Start Budget", "Budget Drafting", "Biz Manager"),
-            ("Budget Drafting", "Send To Director", "Budget Director Review", "Biz User"),
-            ("Budget Director Review", "Approve Director", "Budget CEO Review", "Biz Manager"),
-            ("Budget Director Review", "Reject Director", "Rejected", "Biz Manager"),
-            ("Budget CEO Review", "Approve Budget", "Budget Approved", "Biz Admin"),
-            ("Budget CEO Review", "Reject By CEO", "Rejected", "Biz Admin"),
-            ("Budget Approved", "Start Proposal", "Proposal Drafting", "Biz User"),
-            ("Proposal Drafting", "Submit Proposal", "Proposal Review", "Biz User"),
-            ("Proposal Review", "Approve Proposal", "Proposal Approved", "Biz Manager"),
-            ("Proposal Review", "Reject Proposal", "Rejected", "Biz Manager"),
-            ("Proposal Approved", "Send To Client", "Sent to Client", "Biz User"),
+            ("Budget Drafting", "Reject Request", "Rejected", "Biz Manager"),
+            ("Budget Director Review", "Reject Request", "Rejected", "Biz Manager"),
+            ("Budget CEO Review", "Reject Request", "Rejected", "Biz Admin"),
+            ("Proposal Drafting", "Reject Request", "Rejected", "Biz Manager"),
+            ("Proposal Review", "Reject Request", "Rejected", "Biz Manager"),
+            ("Proposal Approved", "Reject Request", "Rejected", "Biz Manager"),
+            ("Rejected", "Archive Request", "Archived", "Biz Manager"),
+            ("Sent to Client", "Archive Request", "Archived", "Biz Manager"),
+        ],
+    },
+    "Tender Budget Workflow": {
+        "doctype": "Tender Budget",
+        "state_field": "status",
+        "states": [
+            ("Draft", "Biz User"),
+            ("Under Director Review", "Biz Manager"),
+            ("Under CEO Review", "Biz Admin"),
+            ("Approved", "Biz Admin"),
+            ("Rejected", "Biz Manager"),
+            ("Archived", "Biz Admin"),
+        ],
+        "transitions": [
+            ("Draft", "Send To Director", "Under Director Review", "Biz User"),
+            ("Under Director Review", "Approve Director", "Under CEO Review", "Biz Manager"),
+            ("Under Director Review", "Reject Director", "Rejected", "Biz Manager"),
+            ("Under CEO Review", "Approve Budget", "Approved", "Biz Admin"),
+            ("Under CEO Review", "Reject By CEO", "Rejected", "Biz Admin"),
+            ("Approved", "Archive Budget", "Archived", "Biz Admin"),
+            ("Rejected", "Archive Budget", "Archived", "Biz Admin"),
+        ],
+    },
+    "Commercial Proposal Workflow": {
+        "doctype": "Commercial Proposal",
+        "state_field": "status",
+        "states": [
+            ("Draft", "Biz User"),
+            ("Under Approval", "Biz Manager"),
+            ("Approved", "Biz Manager"),
+            ("Admin Review", "Biz Admin"),
+            ("Admin Approved", "Biz Admin"),
+            ("Sent", "Biz User"),
+            ("Rejected", "Biz Manager"),
+        ],
+        "transitions": [
+            ("Draft", "Submit Proposal", "Under Approval", "Biz User"),
+            ("Under Approval", "Approve Proposal", "Approved", "Biz Manager"),
+            ("Under Approval", "Reject Proposal", "Rejected", "Biz Manager"),
+            ("Approved", "Send To Admin", "Admin Review", "Biz Manager"),
+            ("Admin Review", "Approve By Admin", "Admin Approved", "Biz Admin"),
+            ("Admin Review", "Reject By Admin", "Rejected", "Biz Admin"),
+            ("Admin Approved", "Send To Client", "Sent", "Biz Manager"),
         ],
     },
 }
@@ -136,8 +178,9 @@ def ensure_role_profiles() -> None:
                 frappe.get_doc({"doctype": "Role", "role_name": role}).insert(ignore_permissions=True)
 
         if frappe.db.exists("Role Profile", profile_name):
-            # Avoid touching existing profiles during migrate to prevent lock/contention
-            # from queued update_all_users jobs.
+            # Ensure newly added roles are present in an existing profile
+            # without forcing full document update.
+            _insert_role_profile_sql(profile_name, roles)
             continue
 
         profile = frappe.get_doc(
@@ -210,11 +253,17 @@ def ensure_users() -> None:
 
 
 def _upsert_custom_docperm(doctype: str, role: str, flags: dict[str, int]) -> None:
-    exists = frappe.db.get_value(
+    rows = frappe.get_all(
         "Custom DocPerm",
-        {"parent": doctype, "role": role, "permlevel": 0, "if_owner": 0},
-        "name",
+        filters={"parent": doctype, "role": role, "permlevel": 0, "if_owner": 0},
+        fields=["name"],
+        order_by="creation asc",
     )
+    exists = rows[0].name if rows else None
+
+    # Keep first row and remove duplicates, otherwise UI shows duplicated permissions.
+    for duplicate in rows[1:]:
+        frappe.delete_doc("Custom DocPerm", duplicate.name, ignore_permissions=True, force=1)
 
     payload = {
         "parent": doctype,
@@ -356,6 +405,7 @@ def _upsert_workflow(name: str, definition: dict) -> None:
     wf.workflow_state_field = definition["state_field"]
     wf.is_active = 1
     wf.override_status = 1
+    wf.send_email_alert = 0
 
     for state_name, allow_edit in definition["states"]:
         wf.append(
@@ -366,6 +416,8 @@ def _upsert_workflow(name: str, definition: dict) -> None:
                 "allow_edit": allow_edit,
                 "update_field": definition["state_field"],
                 "update_value": state_name,
+                "send_email": 0,
+                "next_action_email_template": None,
             },
         )
 
@@ -386,15 +438,12 @@ def _upsert_workflow(name: str, definition: dict) -> None:
 
 
 def ensure_workflows() -> None:
-    # Variant 1: single source workflow lives on Tender Request.
-    # Child DocTypes (Tender Budget / Commercial Proposal) should not carry separate approval workflows.
     for legacy_name in LEGACY_WORKFLOWS:
         if not frappe.db.exists("Workflow", legacy_name):
             continue
         try:
             frappe.delete_doc("Workflow", legacy_name, ignore_permissions=True, force=1)
         except Exception:
-            # Fallback: keep record but disable it so it never controls transitions.
             frappe.db.set_value("Workflow", legacy_name, "is_active", 0, update_modified=False)
 
     for workflow_name, definition in WORKFLOWS.items():

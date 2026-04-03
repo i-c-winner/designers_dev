@@ -1,0 +1,21 @@
+.standard-items-sections .sidebar-notification .item-anchor {
+	position: relative;
+}
+
+.standard-items-sections .sidebar-notification .designers-notification-badge {
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+	min-width: 18px;
+	height: 18px;
+	padding: 0 5px;
+	border-radius: 999px;
+	background: #e11d48;
+	color: #fff;
+	font-size: 11px;
+	line-height: 18px;
+	font-weight: 600;
+	text-align: center;
+	pointer-events: none;
+}

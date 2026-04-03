@@ -1,12 +1,34 @@
 from __future__ import annotations
 
+from pathlib import Path
 import time
 
 import frappe
+from frappe import _
 from frappe.model.document import Document
+from frappe.utils.file_manager import get_file_path
+
+MAX_COMPARE_CHANGES = 500
+ALLOWED_BUDGET_FILE_EXTENSIONS = {".xlsx", ".xlsm", ".xls"}
 
 
 class TenderBudget(Document):
+    PARENT_STATUS_BY_BUDGET_STATUS = {
+        "Draft": "Budget Drafting",
+        "Under Director Review": "Budget Director Review",
+        "Under CEO Review": "Budget CEO Review",
+        "Approved": "Budget Approved",
+        "Rejected": "Rejected",
+    }
+
+    def _validate_budget_file(self):
+        if not self.budget_file:
+            return
+
+        ext = Path((self.budget_file or "").split("?", 1)[0]).suffix.lower()
+        if ext not in ALLOWED_BUDGET_FILE_EXTENSIONS:
+            frappe.throw(_("Budget File must be an Excel file (.xlsx, .xlsm, .xls)"))
+
     def _archive_previous_versions(self):
         if not self.tender_request or not self.name:
             return
@@ -31,6 +53,8 @@ class TenderBudget(Document):
                 time.sleep(0.2)
 
     def validate(self):
+        self._validate_budget_file()
+
         if not self.tender_request:
             return
 
@@ -97,3 +121,117 @@ class TenderBudget(Document):
 
         if self.tender_request:
             frappe.db.set_value("Tender Request", self.tender_request, "budget_version", self.version, update_modified=False)
+            parent_status = self.PARENT_STATUS_BY_BUDGET_STATUS.get(self.status)
+            if parent_status:
+                frappe.db.set_value("Tender Request", self.tender_request, "status", parent_status, update_modified=False)
+
+
+def _get_budget_by_version(tender_request: str, version: int) -> dict:
+    budget = frappe.db.get_value(
+        "Tender Budget",
+        {"tender_request": tender_request, "version": int(version)},
+        ["name", "version", "budget_file", "status"],
+        as_dict=True,
+    )
+    if not budget:
+        frappe.throw(_("Tender Budget version {0} was not found").format(version))
+    if not budget.budget_file:
+        frappe.throw(_("Tender Budget version {0} has no attached Budget File").format(version))
+    return budget
+
+
+def _load_workbook(file_url: str):
+    try:
+        from openpyxl import load_workbook
+    except ImportError:
+        frappe.throw(_("openpyxl is not installed in the current environment"))
+
+    ext = Path((file_url or "").split("?", 1)[0]).suffix.lower()
+    if ext not in {".xlsx", ".xlsm"}:
+        frappe.throw(_("Comparison supports only .xlsx/.xlsm files"))
+
+    file_path = get_file_path(file_url)
+    return load_workbook(filename=file_path, data_only=True, read_only=True)
+
+
+def _compare_workbooks(old_wb, new_wb) -> dict:
+    old_sheets = set(old_wb.sheetnames)
+    new_sheets = set(new_wb.sheetnames)
+
+    added_sheets = sorted(new_sheets - old_sheets)
+    removed_sheets = sorted(old_sheets - new_sheets)
+
+    changes = []
+
+    for sheet in sorted(old_sheets & new_sheets):
+        old_ws = old_wb[sheet]
+        new_ws = new_wb[sheet]
+
+        max_row = max(old_ws.max_row or 0, new_ws.max_row or 0)
+        max_col = max(old_ws.max_column or 0, new_ws.max_column or 0)
+
+        if max_row == 0 or max_col == 0:
+            continue
+
+        for r in range(1, max_row + 1):
+            for c in range(1, max_col + 1):
+                old_val = old_ws.cell(row=r, column=c).value
+                new_val = new_ws.cell(row=r, column=c).value
+                if old_val != new_val:
+                    changes.append(
+                        {
+                            "sheet": sheet,
+                            "cell": f"{new_ws.cell(row=r, column=c).coordinate}",
+                            "old": "" if old_val is None else str(old_val),
+                            "new": "" if new_val is None else str(new_val),
+                        }
+                    )
+                    if len(changes) >= MAX_COMPARE_CHANGES:
+                        return {
+                            "added_sheets": added_sheets,
+                            "removed_sheets": removed_sheets,
+                            "changes": changes,
+                            "truncated": True,
+                        }
+
+    return {
+        "added_sheets": added_sheets,
+        "removed_sheets": removed_sheets,
+        "changes": changes,
+        "truncated": False,
+    }
+
+
+@frappe.whitelist()
+def compare_budget_versions(
+    tender_request: str | None = None,
+    from_version: int | None = None,
+    to_version: int | None = None,
+):
+    if not tender_request:
+        frappe.throw(_("Tender Request is required"))
+    if not from_version or not to_version:
+        frappe.throw(_("Both versions are required"))
+    if int(from_version) == int(to_version):
+        frappe.throw(_("Choose two different versions"))
+
+    old_budget = _get_budget_by_version(tender_request, int(from_version))
+    new_budget = _get_budget_by_version(tender_request, int(to_version))
+
+    old_wb = _load_workbook(old_budget.budget_file)
+    new_wb = _load_workbook(new_budget.budget_file)
+    result = _compare_workbooks(old_wb, new_wb)
+
+    return {
+        "tender_request": tender_request,
+        "from": old_budget,
+        "to": new_budget,
+        "summary": {
+            "added_sheets": result["added_sheets"],
+            "removed_sheets": result["removed_sheets"],
+            "changes_count": len(result["changes"]),
+            "truncated": result["truncated"],
+            "max_changes": MAX_COMPARE_CHANGES,
+        },
+        "changes": result["changes"],
+    }

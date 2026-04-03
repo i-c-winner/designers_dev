@@ -5,7 +5,6 @@ from typing import Any
 
 import frappe
 from frappe import _
-from designers.services.notification_service import notify_new_website_request
 
 
 def _parse_data(data: str | dict[str, Any] | None) -> dict[str, Any]:
@@ -68,7 +67,6 @@ def create_tender_from_website(data: str | dict[str, Any] | None = None) -> dict
             "description": payload.get("description"),
         }
     ).insert(ignore_permissions=True)
-    notify_new_website_request(doc)
 
     attachments = payload.get("attachments") or []
     for item in attachments:
@@ -182,14 +180,18 @@ def create_proposal(tender_request: str, tender_budget: str | None = None) -> di
 
     budget_version = budget.version
 
-    proposal = frappe.get_doc(
-        {
-            "doctype": "Commercial Proposal",
-            "tender_request": tender.name,
-            "tender_budget": tender_budget,
-            "budget_version": budget_version,
-            "status": "Draft",
-        }
-    ).insert(ignore_permissions=True)
+    proposal_data = {
+        "doctype": "Commercial Proposal",
+        "tender_request": tender.name,
+        "status": "Draft",
+    }
+
+    proposal_meta = frappe.get_meta("Commercial Proposal")
+    if proposal_meta.has_field("tender_budget"):
+        proposal_data["tender_budget"] = tender_budget
+    if proposal_meta.has_field("budget_version"):
+        proposal_data["budget_version"] = budget_version
+
+    proposal = frappe.get_doc(proposal_data).insert(ignore_permissions=True)
 
     return {"proposal": proposal.name, "status": proposal.status}

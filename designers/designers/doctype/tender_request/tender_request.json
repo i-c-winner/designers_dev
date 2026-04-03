@@ -19,10 +19,11 @@
   "website_request_id",
   "description",
   "description_from_client",
-  "column_break_main",
   "deadline",
   "status",
   "assigned_to",
+  "access_section",
+  "access_users",
   "budget_version",
   "rejection_reason",
   "files"
@@ -81,12 +82,7 @@
   {
    "fieldname": "description",
    "fieldtype": "Small Text",
-   "label": "Description",
-   "options": "dsfdsfsdf"
-  },
-  {
-   "fieldname": "column_break_main",
-   "fieldtype": "Column Break"
+   "label": "Description"
   },
   {
    "fieldname": "deadline",
@@ -100,7 +96,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Status",
-   "options": "New Request\nIn Progress\nUnder Review\nRejected\nBudget Drafting\nBudget Director Review\nBudget CEO Review\nBudget Approved\nProposal Drafting\nProposal Review\nProposal Approved\nSent to Client"
+   "options": "New Request\nIn Progress\nUnder Review\nRejected\nBudget Drafting\nBudget Director Review\nBudget CEO Review\nBudget Approved\nProposal Drafting\nProposal Review\nProposal Approved\nSent to Client\nArchived"
   },
   {
    "fieldname": "assigned_to",
@@ -108,6 +104,17 @@
    "label": "Assigned To",
    "options": "User",
    "read_only": 1
+  },
+  {
+   "fieldname": "access_section",
+   "fieldtype": "Section Break",
+   "label": "Access"
+  },
+  {
+   "fieldname": "access_users",
+   "fieldtype": "Table",
+   "label": "Allowed Users",
+   "options": "Tender Request Access User"
   },
   {
    "default": "0",

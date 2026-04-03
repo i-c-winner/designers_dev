@@ -4,6 +4,7 @@ import frappe
 
 from designers.install.security import (
     ensure_doc_permissions,
+    ensure_role_profiles,
     ensure_roles,
     ensure_workflow_states,
     ensure_workflows,
@@ -26,6 +27,7 @@ def after_migrate():
 
 def ensure_security_workflows():
     ensure_roles()
+    ensure_role_profiles()
     ensure_doc_permissions()
     ensure_workflow_states()
     ensure_workflows()
