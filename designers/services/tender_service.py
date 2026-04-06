@@ -123,15 +123,25 @@ def assign_next_user(doc) -> None:
             "status": ("!=", "Cancelled"),
         },
     ):
-        assign_add(
-            {
-                "assign_to": [user],
-                "doctype": doc.doctype,
-                "name": doc.name,
-                "description": _("Tender request requires your attention"),
-                "date": now_datetime().date(),
-            }
-        )
+        payload = {
+            "assign_to": [user],
+            "doctype": doc.doctype,
+            "name": doc.name,
+            "description": _("Tender request requires your attention"),
+            "date": now_datetime().date(),
+        }
+
+        # Web Form anonymous submissions run as Guest and do not have doctype permissions.
+        # Temporarily elevate to create assignment for the responsible internal user.
+        if frappe.session.user == "Guest":
+            previous_user = frappe.session.user
+            try:
+                frappe.set_user("Administrator")
+                assign_add(payload)
+            finally:
+                frappe.set_user(previous_user)
+        else:
+            assign_add(payload)
 
 
 def is_website_tender(doc) -> bool:

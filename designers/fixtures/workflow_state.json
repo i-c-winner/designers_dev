@@ -2,11 +2,11 @@
  {
   "docstatus": 0,
   "doctype": "Workflow State",
-  "icon": "remove",
-  "modified": "2026-03-25 15:34:33.859384",
-  "name": "Rejected",
-  "style": "Danger",
-  "workflow_state_name": "Rejected"
+  "icon": "",
+  "modified": "2026-03-30 23:41:01.300668",
+  "name": "Under CEO Review",
+  "style": "Primary",
+  "workflow_state_name": "Under CEO Review"
  },
  {
   "docstatus": 0,
@@ -39,15 +39,6 @@
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
-  "modified": "2026-03-28 15:34:16.320634",
-  "name": "Budget Drafting",
-  "style": "Primary",
-  "workflow_state_name": "Budget Drafting"
- },
- {
-  "docstatus": 0,
-  "doctype": "Workflow State",
-  "icon": "",
   "modified": "2026-03-28 15:34:16.321147",
   "name": "Budget Director Review",
   "style": "Primary",
@@ -75,19 +66,100 @@
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
-  "modified": "2026-03-28 15:34:16.322531",
-  "name": "Proposal Drafting",
+  "modified": "2026-03-28 15:34:16.322993",
+  "name": "Proposal Review",
   "style": "Primary",
-  "workflow_state_name": "Proposal Drafting"
+  "workflow_state_name": "Proposal Review"
  },
  {
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
-  "modified": "2026-03-28 15:34:16.322993",
-  "name": "Proposal Review",
+  "modified": "2026-03-28 15:34:16.323881",
+  "name": "Sent to Client",
   "style": "Primary",
-  "workflow_state_name": "Proposal Review"
+  "workflow_state_name": "Sent to Client"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "ok-sign",
+  "modified": "2026-03-30 23:40:37.240539",
+  "name": "Approved",
+  "style": "Success",
+  "workflow_state_name": "Approved"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-03-30 23:41:01.296306",
+  "name": "Draft",
+  "style": "Primary",
+  "workflow_state_name": "Draft"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-03-30 23:41:01.298078",
+  "name": "Under Director Review",
+  "style": "Primary",
+  "workflow_state_name": "Under Director Review"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-03-30 23:41:01.301072",
+  "name": "Sent",
+  "style": "Primary",
+  "workflow_state_name": "Sent"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-04-01 13:51:52.908891",
+  "name": "Admin Approved",
+  "style": "Primary",
+  "workflow_state_name": "Admin Approved"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-04-01 13:51:52.929135",
+  "name": "Admin Review",
+  "style": "Primary",
+  "workflow_state_name": "Admin Review"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "remove",
+  "modified": "2026-03-25 15:34:33.859384",
+  "name": "Rejected",
+  "style": "Danger",
+  "workflow_state_name": "Rejected"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-03-28 15:34:16.320634",
+  "name": "Budget Drafting",
+  "style": "Primary",
+  "workflow_state_name": "Budget Drafting"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-03-28 15:34:16.322531",
+  "name": "Proposal Drafting",
+  "style": "Primary",
+  "workflow_state_name": "Proposal Drafting"
  },
  {
   "docstatus": 0,
@@ -102,9 +174,27 @@
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
-  "modified": "2026-03-28 15:34:16.323881",
-  "name": "Sent to Client",
+  "modified": "2026-03-30 23:41:01.302227",
+  "name": "Under Approval",
   "style": "Primary",
-  "workflow_state_name": "Sent to Client"
+  "workflow_state_name": "Under Approval"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-04-05 22:22:36.229932",
+  "name": "Cancelled",
+  "style": "Primary",
+  "workflow_state_name": "Cancelled"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-03-30 23:41:01.293677",
+  "name": "Archived",
+  "style": "Primary",
+  "workflow_state_name": "Archived"
  }
 ]

@@ -36,13 +36,72 @@ after_install = "designers.install.setup.after_install"
 before_migrate = "designers.install.setup.before_migrate"
 after_migrate = "designers.install.setup.after_migrate"
 
-# Source of truth for roles/workflows/permissions is Python code in designers.install.security.
-# Keep fixtures disabled for these entities to avoid drift/conflicts.
 fixtures = [
     {
         "doctype": "Print Format",
         "filters": [["doc_type", "=", "Commercial Proposal"]],
-    }
+    },
+    {
+        "doctype": "Workflow",
+        "filters": [
+            [
+                "name",
+                "in",
+                [
+                    "Tender Request Workflow",
+                    "Tender Budget Workflow",
+                    "Commercial Proposal Workflow",
+                ],
+            ]
+        ],
+    },
+    {
+        "doctype": "Workflow Transition",
+        "filters": [
+            [
+                "parent",
+                "in",
+                [
+                    "Tender Request Workflow",
+                    "Tender Budget Workflow",
+                    "Commercial Proposal Workflow",
+                ],
+            ]
+        ],
+    },
+    {
+        "doctype": "Workflow State",
+        "filters": [
+            [
+                "workflow_state_name",
+                "in",
+                [
+                    "New Request",
+                    "In Progress",
+                    "Under Review",
+                    "Rejected",
+                    "Cancelled",
+                    "Budget Drafting",
+                    "Budget Director Review",
+                    "Budget CEO Review",
+                    "Budget Approved",
+                    "Proposal Drafting",
+                    "Proposal Review",
+                    "Proposal Approved",
+                    "Sent to Client",
+                    "Archived",
+                    "Draft",
+                    "Under Director Review",
+                    "Under CEO Review",
+                    "Approved",
+                    "Under Approval",
+                    "Admin Review",
+                    "Admin Approved",
+                    "Sent",
+                ],
+            ]
+        ],
+    },
 ]
 
 override_whitelisted_methods = {

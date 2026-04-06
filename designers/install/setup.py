@@ -1,3 +1,4 @@
+
 from __future__ import annotations
 
 import frappe
@@ -6,9 +7,19 @@ from designers.install.security import (
     ensure_doc_permissions,
     ensure_role_profiles,
     ensure_roles,
-    ensure_workflow_states,
-    ensure_workflows,
 )
+
+WEB_FORM_PHONE_CLIENT_SCRIPT = """
+frappe.web_form.validate = () => {
+    const phone = (frappe.web_form.get_value("contact_phone") || "").trim();
+    const regex = /^\\+7-(?:\\d{3}|\\(\\d{3}\\))-\\d{3}-\\d{2}-\\d{2}$/;
+    if (!phone || !regex.test(phone)) {
+        frappe.msgprint("Формат телефона: +7-999-123-45-67 или +7-(999)-123-45-67");
+        return false;
+    }
+    return true;
+};
+""".strip()
 
 
 def after_install():
@@ -16,9 +27,8 @@ def after_install():
 
 
 def before_migrate():
-    # Keep only role/state prereqs before schema sync.
+    # Keep only role prerequisites before schema sync.
     ensure_roles()
-    ensure_workflow_states()
 
 
 def after_migrate():
@@ -29,11 +39,10 @@ def ensure_security_workflows():
     ensure_roles()
     ensure_role_profiles()
     ensure_doc_permissions()
-    ensure_workflow_states()
-    ensure_workflows()
     ensure_designers_workspace()
     ensure_designers_workspace_sidebar()
     ensure_designers_desktop_icon()
+    ensure_commercial_proposal_web_form()
 
 
 def ensure_designers_workspace():
@@ -157,3 +166,70 @@ def ensure_designers_desktop_icon():
 
     icon.flags.ignore_mandatory = True
     icon.save(ignore_permissions=True)
+
+
+def ensure_commercial_proposal_web_form():
+    web_form_name = frappe.db.get_value("Web Form", {"route": "commercial-proposal"}, "name")
+    if web_form_name:
+        web_form = frappe.get_doc("Web Form", web_form_name)
+        changed = False
+    else:
+        web_form = frappe.new_doc("Web Form")
+        web_form.title = "Commercial Proposal"
+        web_form.route = "commercial-proposal"
+        web_form.doc_type = "Tender Request"
+        web_form.module = "Designers"
+        web_form.is_standard = 0
+        web_form.allow_edit = 0
+        web_form.allow_delete = 0
+        web_form.allow_comments = 0
+        web_form.allow_print = 0
+        web_form.allow_incomplete = 0
+        web_form.show_list = 0
+        web_form.show_sidebar = 0
+        web_form.button_label = "Save"
+        web_form.set("web_form_fields", [])
+        web_form.append(
+            "web_form_fields",
+            {
+                "fieldname": "connect_user",
+                "fieldtype": "Data",
+                "label": "Контактное лицо",
+                "reqd": 1,
+            },
+        )
+        web_form.append(
+            "web_form_fields",
+            {
+                "fieldname": "contact_phone",
+                "fieldtype": "Data",
+                "label": "Контактный телефон",
+                "reqd": 1,
+            },
+        )
+        web_form.append(
+            "web_form_fields",
+            {
+                "fieldname": "files",
+                "fieldtype": "Attach",
+                "label": "Файлы",
+            },
+        )
+        changed = True
+
+    target_values = {
+        "published": 1,
+        "allow_multiple": 1,
+        "anonymous": 1,
+        "login_required": 0,
+        "apply_document_permissions": 0,
+        "client_script": WEB_FORM_PHONE_CLIENT_SCRIPT,
+    }
+
+    for fieldname, target_value in target_values.items():
+        if web_form.get(fieldname) != target_value:
+            web_form.set(fieldname, target_value)
+            changed = True
+
+    if changed:
+        web_form.save(ignore_permissions=True)

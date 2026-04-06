@@ -113,6 +113,42 @@ class TenderRequest(Document):
         if self.flags.get("create_project_structure_on_update"):
             create_project_structure(self.project_name, owner=self.owner)
         assign_next_user(self)
+        self._ensure_biz_user_visibility()
+
+    def _ensure_biz_user_visibility(self):
+        # Website submissions are created by Guest. Make them visible to all Biz Users.
+        if self.owner != "Guest":
+            return
+
+        existing_users = set(
+            frappe.get_all(
+                "Tender Request Access User",
+                filters={"parent": self.name, "parenttype": "Tender Request", "parentfield": "access_users"},
+                pluck="user",
+            )
+        )
+
+        biz_users = set(
+            frappe.db.sql(
+                """
+                select distinct hr.parent
+                from `tabHas Role` hr
+                inner join `tabUser` u on u.name = hr.parent
+                where hr.role = 'Biz User'
+                  and ifnull(hr.parenttype, 'User') = 'User'
+                  and hr.parent not in ('Administrator', 'Guest')
+                  and ifnull(u.enabled, 0) = 1
+                """,
+                pluck=True,
+            )
+        )
+
+        if self.assigned_to and self.assigned_to not in {"Administrator", "Guest"}:
+            biz_users.add(self.assigned_to)
+
+        merged = sorted(existing_users | biz_users)
+        if set(merged) != existing_users:
+            _replace_access_users(self.name, merged)
 
 
 def _get_latest_child(doctype: str, tender_request: str):
@@ -202,6 +238,14 @@ def update_access_users(tender_request: str, users=None):
     normalized = _normalize_access_users(users)
     _replace_access_users(tender_request, normalized)
     return {"name": tender_request, "access_users": normalized}
+
+
+def backfill_biz_user_visibility_for_guest_requests():
+    names = frappe.get_all("Tender Request", filters={"owner": "Guest"}, pluck="name")
+    for name in names:
+        doc = frappe.get_doc("Tender Request", name)
+        doc._ensure_biz_user_visibility()
+    return {"updated": len(names)}
 
 
 def _has_workflow_action(doc, action: str) -> bool:
