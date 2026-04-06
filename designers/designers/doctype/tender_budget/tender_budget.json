@@ -9,6 +9,7 @@
   "tender_request",
   "version",
   "status",
+  "amended_from",
   "budget_amount",
   "currency",
   "budget_file",
@@ -39,7 +40,17 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Status",
-   "options": "Draft\nUnder Director Review\nUnder CEO Review\nApproved\nRejected\nArchived"
+   "options": "Draft\nUnder Director Review\nUnder CEO Review\nApproved\nRejected\nCancelled\nArchived"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Tender Budget",
+   "print_hide": 1,
+   "read_only": 1
   },
   {
    "fieldname": "budget_amount",
@@ -78,6 +89,7 @@
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [],
  "modified": "2026-03-29 21:39:19.270432",
  "modified_by": "Administrator",

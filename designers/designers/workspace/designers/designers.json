@@ -1,7 +1,7 @@
 {
  "app": "designers",
  "charts": [],
- "content": "[{\"id\":\"designers_header\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Designers</b></span>\",\"col\":12}},{\"id\":\"designers_shortcut_tender_request\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Tender Request\",\"col\":4}},{\"id\":\"designers_shortcut_tender_budget\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Tender Budget\",\"col\":4}},{\"id\":\"designers_shortcut_commercial_proposal\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Commercial Proposal\",\"col\":4}},{\"id\":\"designers_card_links\",\"type\":\"card\",\"data\":{\"card_name\":\"Link\",\"col\":12}}]",
+ "content": "[{\"id\":\"designers_header\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Designers</b></span>\",\"col\":12}},{\"id\":\"designers_shortcut_tender_request\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"\u041f\u0440\u043e\u0435\u043a\u0442\",\"col\":4}},{\"id\":\"designers_shortcut_tender_budget\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"\u0411\u044e\u0434\u0436\u0435\u0442\",\"col\":4}},{\"id\":\"designers_shortcut_commercial_proposal\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"\u041a\u043e\u043c\u043c\u0435\u0440\u0447\u0435\u0441\u043a\u043e\u0435 \u043f\u0440\u0435\u0434\u043b\u043e\u0436\u0435\u043d\u0438\u0435\",\"col\":4}},{\"id\":\"designers_card_links\",\"type\":\"card\",\"data\":{\"card_name\":\"\u0421\u0441\u044b\u043b\u043a\u0438\",\"col\":12}}]",
  "creation": "2026-03-30 11:15:00",
  "custom_blocks": [],
  "docstatus": 0,
@@ -16,7 +16,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Tender Request",
+   "label": "\u041f\u0440\u043e\u0435\u043a\u0442",
    "link_count": 0,
    "link_to": "Tender Request",
    "link_type": "DocType",
@@ -26,7 +26,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Tender Budget",
+   "label": "\u0411\u044e\u0434\u0436\u0435\u0442",
    "link_count": 0,
    "link_to": "Tender Budget",
    "link_type": "DocType",
@@ -36,7 +36,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Commercial Proposal",
+   "label": "\u041a\u043e\u043c\u043c\u0435\u0440\u0447\u0435\u0441\u043a\u043e\u0435 \u043f\u0440\u0435\u0434\u043b\u043e\u0436\u0435\u043d\u0438\u0435",
    "link_count": 0,
    "link_to": "Commercial Proposal",
    "link_type": "DocType",
@@ -44,7 +44,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-03-30 13:10:58.191523",
+ "modified": "2026-04-06 14:04:26.650739",
  "modified_by": "Administrator",
  "module": "Designers",
  "name": "Designers",
@@ -59,19 +59,19 @@
  "shortcuts": [
   {
    "doc_view": "List",
-   "label": "Tender Request",
+   "label": "\u041f\u0440\u043e\u0435\u043a\u0442",
    "link_to": "Tender Request",
    "type": "DocType"
   },
   {
    "doc_view": "List",
-   "label": "Tender Budget",
+   "label": "\u0411\u044e\u0434\u0436\u0435\u0442",
    "link_to": "Tender Budget",
    "type": "DocType"
   },
   {
    "doc_view": "List",
-   "label": "Commercial Proposal",
+   "label": "\u041a\u043e\u043c\u043c\u0435\u0440\u0447\u0435\u0441\u043a\u043e\u0435 \u043f\u0440\u0435\u0434\u043b\u043e\u0436\u0435\u043d\u0438\u0435",
    "link_to": "Commercial Proposal",
    "type": "DocType"
   }

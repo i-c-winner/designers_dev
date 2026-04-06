@@ -77,6 +77,7 @@ WORKFLOWS = {
             ("In Progress", "Biz User"),
             ("Under Review", "Biz Manager"),
             ("Rejected", "Biz Manager"),
+            ("Cancelled", "Biz Manager", 2),
             ("Budget Drafting", "Biz User"),
             ("Budget Director Review", "Biz Manager"),
             ("Budget CEO Review", "Biz Admin"),
@@ -85,21 +86,32 @@ WORKFLOWS = {
             ("Proposal Review", "Biz Manager"),
             ("Proposal Approved", "Biz Manager"),
             ("Sent to Client", "Biz User"),
-            ("Archived", "Biz Manager"),
+            ("Archived", "Biz Manager", 1),
         ],
         "transitions": [
-            ("New Request", "Start Work", "In Progress", "Biz User"),
-            ("In Progress", "Send For Review", "Under Review", "Biz User"),
-            ("Under Review", "Reject Request", "Rejected", "Biz Manager"),
-            ("Under Review", "Start Budget", "Budget Drafting", "Biz Manager"),
-            ("Budget Drafting", "Reject Request", "Rejected", "Biz Manager"),
-            ("Budget Director Review", "Reject Request", "Rejected", "Biz Manager"),
-            ("Budget CEO Review", "Reject Request", "Rejected", "Biz Admin"),
-            ("Proposal Drafting", "Reject Request", "Rejected", "Biz Manager"),
-            ("Proposal Review", "Reject Request", "Rejected", "Biz Manager"),
-            ("Proposal Approved", "Reject Request", "Rejected", "Biz Manager"),
-            ("Rejected", "Archive Request", "Archived", "Biz Manager"),
-            ("Sent to Client", "Archive Request", "Archived", "Biz Manager"),
+            ("New Request", "Принять в работу", "In Progress", "Biz User"),
+            ("In Progress", "На согласование", "Under Review", "Biz User"),
+            ("Under Review", "Отклонить", "Rejected", "Biz Manager"),
+            ("Under Review", "Создать бюджет", "Budget Drafting", "Biz Manager"),
+            ("Budget Drafting", "Отклонить", "Rejected", "Biz Manager"),
+            ("Budget Director Review", "Отклонить", "Rejected", "Biz Manager"),
+            ("Budget CEO Review", "Отклонить", "Rejected", "Biz Admin"),
+            ("Proposal Drafting", "Отклонить", "Rejected", "Biz Manager"),
+            ("Proposal Review", "Отклонить", "Rejected", "Biz Manager"),
+            ("Proposal Approved", "Отклонить", "Rejected", "Biz Manager"),
+            ("New Request", "В архив", "Archived", "Biz Manager"),
+            ("In Progress", "В архив", "Archived", "Biz Manager"),
+            ("Under Review", "В архив", "Archived", "Biz Manager"),
+            ("Budget Drafting", "В архив", "Archived", "Biz Manager"),
+            ("Budget Director Review", "В архив", "Archived", "Biz Manager"),
+            ("Budget CEO Review", "В архив", "Archived", "Biz Admin"),
+            ("Budget Approved", "В архив", "Archived", "Biz Admin"),
+            ("Proposal Drafting", "В архив", "Archived", "Biz Manager"),
+            ("Proposal Review", "В архив", "Archived", "Biz Manager"),
+            ("Proposal Approved", "В архив", "Archived", "Biz Manager"),
+            ("Sent to Client", "В архив", "Archived", "Biz Manager"),
+            ("Rejected", "В архив", "Archived", "Biz Manager"),
+            ("Archived", "Отменить КП", "Cancelled", "Biz Manager"),
         ],
     },
     "Tender Budget Workflow": {
@@ -111,16 +123,21 @@ WORKFLOWS = {
             ("Under CEO Review", "Biz Admin"),
             ("Approved", "Biz Admin"),
             ("Rejected", "Biz Manager"),
-            ("Archived", "Biz Admin"),
+            ("Cancelled", "Biz Manager", 2),
+            ("Archived", "Biz Admin", 1),
         ],
         "transitions": [
-            ("Draft", "Send To Director", "Under Director Review", "Biz User"),
-            ("Under Director Review", "Approve Director", "Under CEO Review", "Biz Manager"),
-            ("Under Director Review", "Reject Director", "Rejected", "Biz Manager"),
-            ("Under CEO Review", "Approve Budget", "Approved", "Biz Admin"),
-            ("Under CEO Review", "Reject By CEO", "Rejected", "Biz Admin"),
-            ("Approved", "Archive Budget", "Archived", "Biz Admin"),
-            ("Rejected", "Archive Budget", "Archived", "Biz Admin"),
+            ("Draft", "Бюджет на согласование", "Under Director Review", "Biz User"),
+            ("Under Director Review", "Согласовать бюджет", "Under CEO Review", "Biz Manager"),
+            ("Under Director Review", "Отклонить бюджет", "Rejected", "Biz Manager"),
+            ("Under CEO Review", "Согласовать бюджет", "Approved", "Biz Admin"),
+            ("Under CEO Review", "Отклонить бюджет", "Rejected", "Biz Admin"),
+            ("Draft", "Отправить в архив", "Archived", "Biz Manager"),
+            ("Under Director Review", "Отправить в архив", "Archived", "Biz Manager"),
+            ("Under CEO Review", "Отправить в архив", "Archived", "Biz Admin"),
+            ("Approved", "Отправить в архив", "Archived", "Biz Admin"),
+            ("Rejected", "Отправить в архив", "Archived", "Biz Admin"),
+            ("Archived", "Cancel Budget", "Cancelled", "Biz Admin"),
         ],
     },
     "Commercial Proposal Workflow": {
@@ -134,15 +151,25 @@ WORKFLOWS = {
             ("Admin Approved", "Biz Admin"),
             ("Sent", "Biz User"),
             ("Rejected", "Biz Manager"),
+            ("Cancelled", "Biz Manager", 2),
+            ("Archived", "Biz Admin", 1),
         ],
         "transitions": [
-            ("Draft", "Submit Proposal", "Under Approval", "Biz User"),
-            ("Under Approval", "Approve Proposal", "Approved", "Biz Manager"),
-            ("Under Approval", "Reject Proposal", "Rejected", "Biz Manager"),
-            ("Approved", "Send To Admin", "Admin Review", "Biz Manager"),
-            ("Admin Review", "Approve By Admin", "Admin Approved", "Biz Admin"),
-            ("Admin Review", "Reject By Admin", "Rejected", "Biz Admin"),
-            ("Admin Approved", "Send To Client", "Sent", "Biz Manager"),
+            ("Draft", "КП на согласование", "Under Approval", "Biz User"),
+            ("Under Approval", "Согласовать КП", "Approved", "Biz Manager"),
+            ("Under Approval", "Отклонить КП", "Rejected", "Biz Manager"),
+            ("Approved", "Согласовать КП", "Admin Review", "Biz Admin"),
+            ("Admin Review", "КП на согласование", "Admin Approved", "Biz Admin"),
+            ("Admin Review", "Отклонить КП", "Rejected", "Biz Admin"),
+            ("Admin Approved", "Отправить КП клиенту", "Sent", "Biz Manager"),
+            ("Draft", "В архив", "Archived", "Biz Manager"),
+            ("Under Approval", "В архив", "Archived", "Biz Manager"),
+            ("Approved", "В архив", "Archived", "Biz Manager"),
+            ("Admin Review", "В архив", "Archived", "Biz Admin"),
+            ("Admin Approved", "В архив", "Archived", "Biz Admin"),
+            ("Sent", "В архив", "Archived", "Biz Admin"),
+            ("Rejected", "В архив", "Archived", "Biz Manager"),
+            ("Archived", "Cancel Proposal", "Cancelled", "Biz Admin"),
         ],
     },
 }
@@ -370,7 +397,8 @@ def _ensure_workflow_actions(transitions: list[tuple[str, str, str, str]]) -> No
 def ensure_workflow_states() -> None:
     states = set()
     for definition in WORKFLOWS.values():
-        for state_name, _ in definition["states"]:
+        for state_def in definition["states"]:
+            state_name = state_def[0]
             states.add(state_name)
 
     for state_name in states:
@@ -407,12 +435,17 @@ def _upsert_workflow(name: str, definition: dict) -> None:
     wf.override_status = 1
     wf.send_email_alert = 0
 
-    for state_name, allow_edit in definition["states"]:
+    for state_def in definition["states"]:
+        if len(state_def) == 3:
+            state_name, allow_edit, doc_status = state_def
+        else:
+            state_name, allow_edit = state_def
+            doc_status = 0
         wf.append(
             "states",
             {
                 "state": state_name,
-                "doc_status": 0,
+                "doc_status": doc_status,
                 "allow_edit": allow_edit,
                 "update_field": definition["state_field"],
                 "update_value": state_name,

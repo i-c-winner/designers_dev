@@ -19,6 +19,7 @@ class TenderBudget(Document):
         "Under CEO Review": "Budget CEO Review",
         "Approved": "Budget Approved",
         "Rejected": "Rejected",
+        "Cancelled": "Budget Drafting",
     }
 
     def _validate_budget_file(self):

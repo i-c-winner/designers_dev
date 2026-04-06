@@ -26,13 +26,50 @@ LOCKED_FIELDS_AFTER_FIRST_ACTION = {
     "deadline",
     "description",
 }
+START_WORK_REQUIRED_OPTIONAL_FIELDS = (
+    "project_prefix",
+    "project_type",
+    "client",
+    "source",
+    "description",
+    "deadline",
+)
 
 
 class TenderRequest(Document):
     def validate(self):
         if self.contact_phone and not PHONE_REGEX.fullmatch(self.contact_phone.strip()):
             frappe.throw(PHONE_HINT)
+        self._prepare_start_work_transition()
         self._validate_locked_fields_after_first_action()
+
+    def _prepare_start_work_transition(self):
+        previous = self.get_doc_before_save()
+        if not previous:
+            return
+
+        # Run only on Start Work transition: New Request -> In Progress.
+        if previous.status != "New Request" or self.status != "In Progress":
+            return
+
+        missing: list[str] = []
+        for fieldname in START_WORK_REQUIRED_OPTIONAL_FIELDS:
+            field = self.meta.get_field(fieldname)
+            if not field:
+                continue
+            value = self.get(fieldname)
+            if value is None or (isinstance(value, str) and not value.strip()):
+                missing.append(field.label or fieldname)
+
+        if missing:
+            frappe.throw(
+                "Перед Start Work заполните поля: " + ", ".join(missing)
+            )
+
+        if not self.project_name:
+            self.project_name = make_project_name(self.project_prefix, self.project_type)
+
+        self.flags.create_project_structure_on_update = bool(self.project_name)
 
     def _validate_locked_fields_after_first_action(self):
         if self.is_new():
@@ -65,16 +102,16 @@ class TenderRequest(Document):
         if not self.request_date:
             self.request_date = frappe.utils.today()
 
-        if not self.project_name:
-            self.project_name = make_project_name(self.project_prefix, self.project_type)
-
         if not self.status:
             self.status = "New Request"
 
     def after_insert(self):
-        create_project_structure(self.project_name, owner=self.owner)
+        # Project name/folder are created when workflow moves to Start Work (In Progress).
+        pass
 
     def on_update(self):
+        if self.flags.get("create_project_structure_on_update"):
+            create_project_structure(self.project_name, owner=self.owner)
         assign_next_user(self)
 
 
@@ -226,15 +263,47 @@ def get_action_visibility(tender_request: str):
     return {
         "edit_access": is_super_user(user, roles) or ("Biz Manager" in roles),
         "create_budget": can_create_budget,
-        "send_budget_to_director": _has_workflow_action(latest_budget, "Send To Director"),
-        "approve_director": _has_workflow_action(latest_budget, "Approve Director"),
-        "approve_budget": _has_workflow_action(latest_budget, "Approve Budget"),
+        "send_budget_to_director": (
+            latest_budget is not None
+            and latest_budget.status == "Draft"
+            and _has_workflow_action(latest_budget, "Бюджет на согласование")
+        ),
+        "approve_director": (
+            latest_budget is not None
+            and latest_budget.status == "Under Director Review"
+            and _has_workflow_action(latest_budget, "Согласовать бюджет")
+        ),
+        "approve_budget": (
+            latest_budget is not None
+            and latest_budget.status == "Under CEO Review"
+            and _has_workflow_action(latest_budget, "Согласовать бюджет")
+        ),
         "create_proposal": can_create_proposal,
-        "submit_proposal": _has_workflow_action(latest_proposal, "Submit Proposal"),
-        "approve_proposal": _has_workflow_action(latest_proposal, "Approve Proposal"),
-        "send_to_admin": _has_workflow_action(latest_proposal, "Send To Admin"),
-        "approve_by_admin": _has_workflow_action(latest_proposal, "Approve By Admin"),
-        "send_to_client": _has_workflow_action(latest_proposal, "Send To Client"),
+        "submit_proposal": (
+            latest_proposal is not None
+            and latest_proposal.status == "Draft"
+            and _has_workflow_action(latest_proposal, "КП на согласование")
+        ),
+        "approve_proposal": (
+            latest_proposal is not None
+            and latest_proposal.status == "Under Approval"
+            and _has_workflow_action(latest_proposal, "Согласовать КП")
+        ),
+        "send_to_admin": (
+            latest_proposal is not None
+            and latest_proposal.status == "Approved"
+            and _has_workflow_action(latest_proposal, "Согласовать КП")
+        ),
+        "approve_by_admin": (
+            latest_proposal is not None
+            and latest_proposal.status == "Admin Review"
+            and _has_workflow_action(latest_proposal, "КП на согласование")
+        ),
+        "send_to_client": (
+            latest_proposal is not None
+            and latest_proposal.status == "Admin Approved"
+            and _has_workflow_action(latest_proposal, "Отправить КП клиенту")
+        ),
     }
 
 
@@ -256,7 +325,7 @@ def send_budget_to_director(tender_request: str):
     budget = _get_latest_child("Tender Budget", tender_request)
     if not budget:
         frappe.throw("Создайте Tender Budget перед отправкой директору")
-    updated = _apply_child_workflow_action(budget, "Send To Director")
+    updated = _apply_child_workflow_action(budget, "Бюджет на согласование")
     return {"name": updated.name, "status": updated.status}
 
 
@@ -265,7 +334,7 @@ def approve_budget_director(tender_request: str):
     budget = _get_latest_child("Tender Budget", tender_request)
     if not budget:
         frappe.throw("Tender Budget не найден")
-    updated = _apply_child_workflow_action(budget, "Approve Director")
+    updated = _apply_child_workflow_action(budget, "Согласовать бюджет")
     return {"name": updated.name, "status": updated.status}
 
 
@@ -274,7 +343,7 @@ def approve_budget_ceo(tender_request: str):
     budget = _get_latest_child("Tender Budget", tender_request)
     if not budget:
         frappe.throw("Tender Budget не найден")
-    updated = _apply_child_workflow_action(budget, "Approve Budget")
+    updated = _apply_child_workflow_action(budget, "Согласовать бюджет")
     return {"name": updated.name, "status": updated.status}
 
 
@@ -309,7 +378,7 @@ def submit_proposal_for_approval(tender_request: str):
     proposal = _get_latest_child("Commercial Proposal", tender_request)
     if not proposal:
         frappe.throw("Commercial Proposal не найден")
-    updated = _apply_child_workflow_action(proposal, "Submit Proposal")
+    updated = _apply_child_workflow_action(proposal, "КП на согласование")
     return {"name": updated.name, "status": updated.status}
 
 
@@ -318,7 +387,7 @@ def approve_proposal(tender_request: str):
     proposal = _get_latest_child("Commercial Proposal", tender_request)
     if not proposal:
         frappe.throw("Commercial Proposal не найден")
-    updated = _apply_child_workflow_action(proposal, "Approve Proposal")
+    updated = _apply_child_workflow_action(proposal, "Согласовать КП")
     return {"name": updated.name, "status": updated.status}
 
 
@@ -327,7 +396,7 @@ def send_proposal_to_admin(tender_request: str):
     proposal = _get_latest_child("Commercial Proposal", tender_request)
     if not proposal:
         frappe.throw("Commercial Proposal не найден")
-    updated = _apply_child_workflow_action(proposal, "Send To Admin")
+    updated = _apply_child_workflow_action(proposal, "Согласовать КП")
     return {"name": updated.name, "status": updated.status}
 
 
@@ -336,7 +405,7 @@ def approve_proposal_by_admin(tender_request: str):
     proposal = _get_latest_child("Commercial Proposal", tender_request)
     if not proposal:
         frappe.throw("Commercial Proposal не найден")
-    updated = _apply_child_workflow_action(proposal, "Approve By Admin")
+    updated = _apply_child_workflow_action(proposal, "КП на согласование")
     return {"name": updated.name, "status": updated.status}
 
 

@@ -1,528 +1,401 @@
 // Copyright (c) 2026, Dmitriy and contributors
 // For license information, please see license.txt
 
-const TABLE_SECTIONS = [
-	{
-		title: "Содержание и стоимость работ на этапе проектирования",
-		fieldname: "stages_json",
-		columns: [
-			{ key: "code", label: "Стадия" },
-			{ key: "duration", label: "Срок", className: "center" },
-			{ key: "workdays", label: "Трудоёмкость", className: "center" },
-		],
-	},
-	{
-		title: "Предпроектные работы",
-		fieldname: "preproject_rows_json",
-		columns: [
-			{ key: "index", label: "№", className: "center" },
-			{ key: "name", label: "Состав работ" },
-			{ key: "code", label: "Обозн.", className: "center" },
-			{ key: "price", label: "Стоимость ППД", className: "sum" },
-		],
-	},
-	{
-		title: "Базовое проектирование",
-		fieldname: "project_rows_json",
-		columns: [
-			{ key: "index", label: "№", className: "center" },
-			{ key: "name", label: "Состав работ" },
-			{ key: "code", label: "Обозн.", className: "center" },
-			{ key: "price", label: "Стоимость П", className: "sum" },
-		],
-	},
-	{
-		title: "Рабочее проектирование",
-		fieldname: "working_rows_page1_json",
-		columns: [
-			{ key: "index", label: "№", className: "center" },
-			{ key: "name", label: "Состав работ РД" },
-			{ key: "code", label: "Обозн.", className: "center" },
-			{ key: "price", label: "Стоимость РД", className: "sum" },
-		],
-	},
-	{
-		title: "Продолжение рабочей документации",
-		fieldname: "working_rows_page2_json",
-		columns: [
-			{ key: "index", label: "№", className: "center" },
-			{ key: "name", label: "Состав работ РД" },
-			{ key: "code", label: "Обозн.", className: "center" },
-		],
-	},
-];
-
-const PREVIEW_FIELDS = [
-	"city",
-	"document_date",
-	"offer_subject",
-	"company_name",
-	"stages_json",
-	"preproject_rows_json",
-	"project_rows_json",
-	"working_rows_page1_json",
-	"working_rows_page2_json",
-];
-
-const JSON_TABLE_EDITORS = [
-	{
-		title: "Стадии (сроки и трудоемкость)",
-		fieldname: "stages_json",
-		columns: [
-			{ key: "code", label: "Стадия" },
-			{ key: "duration", label: "Срок" },
-			{ key: "workdays", label: "Трудоёмкость" },
-		],
-	},
-	{
-		title: "Предпроектные работы",
-		fieldname: "preproject_rows_json",
-		columns: [
-			{ key: "index", label: "№" },
-			{ key: "name", label: "Состав работ" },
-			{ key: "code", label: "Обозн." },
-			{ key: "price", label: "Стоимость ППД" },
-		],
-	},
-	{
-		title: "Базовое проектирование",
-		fieldname: "project_rows_json",
-		columns: [
-			{ key: "index", label: "№" },
-			{ key: "name", label: "Состав работ" },
-			{ key: "code", label: "Обозн." },
-			{ key: "price", label: "Стоимость П" },
-		],
-	},
-	{
-		title: "Рабочее проектирование",
-		fieldname: "working_rows_page1_json",
-		columns: [
-			{ key: "index", label: "№" },
-			{ key: "name", label: "Состав работ РД" },
-			{ key: "code", label: "Обозн." },
-			{ key: "price", label: "Стоимость РД" },
-		],
-	},
-	{
-		title: "Продолжение рабочей документации",
-		fieldname: "working_rows_page2_json",
-		columns: [
-			{ key: "index", label: "№" },
-			{ key: "name", label: "Состав работ РД" },
-			{ key: "code", label: "Обозн." },
-		],
-	},
-];
-
-const JSON_TABLE_FIELDS = JSON_TABLE_EDITORS.map((editor) => editor.fieldname);
-
-const PREVIEW_STYLE = `
-	<style>
-		.cp-live-preview {
-			border: 1px solid #dce4f0;
-			background: #fbfdff;
-			padding: 12px;
-			border-radius: 8px;
-			margin-bottom: 16px;
-		}
-
-		.cp-live-preview__title {
-			margin: 0 0 10px;
-			font-size: 16px;
-			font-weight: 600;
-			color: #2a63ad;
-		}
-
-		.cp-live-preview__meta {
-			display: grid;
-			grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-			gap: 8px;
-			margin-bottom: 12px;
-			font-size: 13px;
-		}
-
-		.cp-live-preview__meta strong {
-			color: #2a63ad;
-		}
-
-		.cp-live-preview__section {
-			margin-top: 10px;
-		}
-
-		.cp-live-preview__section h5 {
-			margin: 0 0 6px;
-			font-size: 13px;
-			color: #2a63ad;
-			text-transform: uppercase;
-			letter-spacing: 0.02em;
-		}
-
-		.cp-live-preview table {
-			width: 100%;
-			border-collapse: collapse;
-			font-size: 12px;
-			background: #fff;
-		}
-
-		.cp-live-preview th,
-		.cp-live-preview td {
-			border: 1px solid #d7dde7;
-			padding: 6px 8px;
-			text-align: left;
-			vertical-align: top;
-		}
-
-		.cp-live-preview th {
-			background: #e9f0fb;
-			color: #2a63ad;
-			text-transform: uppercase;
-			font-size: 11px;
-		}
-
-		.cp-live-preview .center {
-			text-align: center;
-		}
-
-		.cp-live-preview .sum {
-			text-align: right;
-			white-space: nowrap;
-			font-weight: 600;
-		}
-
-		.cp-live-preview__note {
-			margin-top: 6px;
-			font-size: 12px;
-			color: #7b7b7b;
-		}
-	</style>
-`;
-
-const JSON_EDITOR_STYLE = `
-	<style>
-		.cp-json-editor {
-			border: 1px solid #dce4f0;
-			background: #fbfdff;
-			padding: 12px;
-			border-radius: 8px;
-			margin-bottom: 16px;
-		}
-
-		.cp-json-editor__section + .cp-json-editor__section {
-			margin-top: 14px;
-		}
-
-		.cp-json-editor__title {
-			margin: 0 0 8px;
-			font-size: 14px;
-			color: #2a63ad;
-		}
-
-		.cp-json-editor__table {
-			width: 100%;
-			border-collapse: collapse;
-			background: #fff;
-			font-size: 12px;
-		}
-
-		.cp-json-editor__table th,
-		.cp-json-editor__table td {
-			border: 1px solid #d7dde7;
-			padding: 6px;
-			vertical-align: middle;
-		}
-
-		.cp-json-editor__table th {
-			background: #e9f0fb;
-			color: #2a63ad;
-			text-transform: uppercase;
-			font-size: 11px;
-		}
-
-		.cp-json-editor__table input {
-			width: 100%;
-			border: 1px solid #d0d7e2;
-			border-radius: 4px;
-			padding: 5px 6px;
-			font-size: 12px;
-			background: #fff;
-		}
-
-		.cp-json-editor__actions {
-			margin-top: 6px;
-			display: flex;
-			gap: 6px;
-		}
-	</style>
-`;
-
-function escapeHtml(value) {
-	return frappe.utils.escape_html(value == null ? "" : String(value));
+function isDocxUrl(fileUrl) {
+	const normalized = (fileUrl || "").split("?", 1)[0].toLowerCase();
+	return normalized.endsWith(".docx");
 }
 
-function parseJsonArray(value) {
-	if (!value) {
-		return [];
-	}
-
-	if (Array.isArray(value)) {
-		return value;
-	}
-
-	try {
-		const parsed = JSON.parse(value);
-		return Array.isArray(parsed) ? parsed : [];
-	} catch (error) {
-		return null;
-	}
-}
-
-function renderTableSection(section, rawValue) {
-	const rows = parseJsonArray(rawValue);
-	const title = `<h5>${escapeHtml(section.title)}</h5>`;
-
-	if (rows === null) {
-		return `
-			<div class="cp-live-preview__section">
-				${title}
-				<div class="cp-live-preview__note">Невалидный JSON</div>
-			</div>
-		`;
-	}
-
-	if (!rows.length) {
-		return `
-			<div class="cp-live-preview__section">
-				${title}
-				<div class="cp-live-preview__note">Нет строк</div>
-			</div>
-		`;
-	}
-
-	const head = section.columns
-		.map((column) => `<th>${escapeHtml(column.label)}</th>`)
-		.join("");
-	const body = rows
-		.map((row) => {
-			const cells = section.columns
-				.map((column) => {
-					const classAttr = column.className ? ` class="${column.className}"` : "";
-					return `<td${classAttr}>${escapeHtml(row?.[column.key])}</td>`;
-				})
-				.join("");
-			return `<tr>${cells}</tr>`;
-		})
-		.join("");
-
-	return `
-		<div class="cp-live-preview__section">
-			${title}
-			<table>
-				<thead><tr>${head}</tr></thead>
-				<tbody>${body}</tbody>
-			</table>
-		</div>
-	`;
-}
-
-function renderLivePreview(frm) {
-	const previewField = frm.get_field("live_print_preview_html");
-	if (!previewField) {
+async function openClientAttachmentsDialog(frm) {
+	if (frm.is_new() || !frm.doc.name) {
+		frappe.msgprint(__("Please save the document first."));
 		return;
 	}
 
-	const metaHtml = `
-		<div class="cp-live-preview__meta">
-			<div><strong>Город:</strong> ${escapeHtml(frm.doc.city)}</div>
-			<div><strong>Дата:</strong> ${escapeHtml(frm.doc.document_date)}</div>
-			<div><strong>Тема:</strong> ${escapeHtml(frm.doc.offer_subject)}</div>
-			<div><strong>Компания:</strong> ${escapeHtml(frm.doc.company_name)}</div>
-		</div>
-	`;
-
-	const tableHtml = TABLE_SECTIONS.map((section) =>
-		renderTableSection(section, frm.doc[section.fieldname])
-	).join("");
-
-	previewField.$wrapper.html(`
-		${PREVIEW_STYLE}
-		<div class="cp-live-preview">
-			<h4 class="cp-live-preview__title">Live Preview (как в Print Format)</h4>
-			${metaHtml}
-			${tableHtml}
-		</div>
-	`);
-}
-
-function normalizeRows(rows, columns) {
-	return rows.map((row) => {
-		const normalized = {};
-		columns.forEach((column) => {
-			normalized[column.key] = row?.[column.key] == null ? "" : String(row[column.key]);
-		});
-		return normalized;
+	const response = await frappe.call({
+		method: "designers.designers.doctype.commercial_proposal.commercial_proposal.get_client_send_attachments",
+		args: { proposal_name: frm.doc.name },
 	});
-}
 
-function getEditorRows(frm, editor) {
-	const parsed = parseJsonArray(frm.doc[editor.fieldname]);
-	if (parsed === null) {
-		return [];
-	}
-	return normalizeRows(parsed, editor.columns);
-}
-
-function commitEditorRows(frm, editor, rows) {
-	const normalized = normalizeRows(rows, editor.columns);
-	frm.__cp_json_editor_cache = frm.__cp_json_editor_cache || {};
-	frm.__cp_json_editor_cache[editor.fieldname] = normalized;
-	frm.set_value(editor.fieldname, JSON.stringify(normalized, null, 2));
-}
-
-function renderJsonTableEditors(frm) {
-	const editorField = frm.get_field("json_tables_editor_html");
-	if (!editorField) {
+	const files = response.message?.files || [];
+	if (!files.length) {
+		frappe.msgprint(__("No attachments found. Attach files first."));
 		return;
 	}
 
-	frm.__cp_json_editor_cache = frm.__cp_json_editor_cache || {};
-	const sections = JSON_TABLE_EDITORS.map((editor) => {
-		const rows = frm.__cp_json_editor_cache[editor.fieldname] || getEditorRows(frm, editor);
-		frm.__cp_json_editor_cache[editor.fieldname] = rows;
+	const rows = files
+		.map(
+			(file, index) => `
+				<label style="display:flex; align-items:center; gap:8px; margin: 0 0 8px 0;">
+					<input type="checkbox" data-file="${frappe.utils.escape_html(file.name)}" ${file.selected ? "checked" : ""}/>
+					<span>${index + 1}. ${frappe.utils.escape_html(file.file_name || file.file_url || file.name)}</span>
+				</label>
+			`
+		)
+		.join("");
 
-		const head = editor.columns.map((column) => `<th>${escapeHtml(column.label)}</th>`).join("");
-		const body = rows
-			.map((row, rowIndex) => {
-				const cells = editor.columns
-					.map((column) => {
-						const value = escapeHtml(row[column.key]);
-						return `<td><input data-json-editor-input="1" data-field="${editor.fieldname}" data-row="${rowIndex}" data-key="${column.key}" value="${value}" /></td>`;
-					})
-					.join("");
-				return `<tr>${cells}<td><button class="btn btn-xs btn-secondary" data-remove-row="1" data-field="${editor.fieldname}" data-row="${rowIndex}" type="button">Удалить</button></td></tr>`;
-			})
-			.join("");
-
-		return `
-			<div class="cp-json-editor__section">
-				<h5 class="cp-json-editor__title">${escapeHtml(editor.title)}</h5>
-				<table class="cp-json-editor__table">
-					<thead>
-						<tr>${head}<th>Действия</th></tr>
-					</thead>
-					<tbody>${body || `<tr><td colspan="${editor.columns.length + 1}">Нет строк</td></tr>`}</tbody>
-				</table>
-				<div class="cp-json-editor__actions">
-					<button class="btn btn-xs btn-primary" data-add-row="1" data-field="${editor.fieldname}" type="button">Добавить строку</button>
-				</div>
-			</div>
-		`;
-	}).join("");
-
-	editorField.$wrapper.html(`
-		${JSON_EDITOR_STYLE}
-		<div class="cp-json-editor">
-			${sections}
-		</div>
-	`);
-
-	JSON_TABLE_FIELDS.forEach((fieldname) => {
-		if (frm.fields_dict[fieldname]) {
-			frm.toggle_display(fieldname, false);
-		}
-	});
-
-	if (!frm.__cp_json_editor_events_bound) {
-		frm.__cp_json_editor_events_bound = true;
-
-		editorField.$wrapper.on("input", "[data-json-editor-input]", (event) => {
-			const target = event.currentTarget;
-			const fieldname = target.dataset.field;
-			const rowIndex = Number(target.dataset.row);
-			const key = target.dataset.key;
-			const editor = JSON_TABLE_EDITORS.find((item) => item.fieldname === fieldname);
-			if (!editor) {
-				return;
-			}
-
-			const rows = frm.__cp_json_editor_cache[fieldname] || getEditorRows(frm, editor);
-			if (!rows[rowIndex]) {
-				return;
-			}
-
-			rows[rowIndex][key] = target.value || "";
-			commitEditorRows(frm, editor, rows);
-		});
-
-		editorField.$wrapper.on("click", "[data-add-row]", (event) => {
-			const fieldname = event.currentTarget.dataset.field;
-			const editor = JSON_TABLE_EDITORS.find((item) => item.fieldname === fieldname);
-			if (!editor) {
-				return;
-			}
-
-			const rows = frm.__cp_json_editor_cache[fieldname] || getEditorRows(frm, editor);
-			const newRow = {};
-			editor.columns.forEach((column) => {
-				newRow[column.key] = "";
+	const dialog = new frappe.ui.Dialog({
+		title: __("Select Attachments For Client"),
+		size: "large",
+		fields: [
+			{
+				fieldname: "attachments_html",
+				fieldtype: "HTML",
+			},
+		],
+		primary_action_label: __("Save"),
+		primary_action: async () => {
+			const selected = [];
+			dialog.$wrapper.find("input[type='checkbox'][data-file]").each((_, node) => {
+				if (node.checked) {
+					selected.push(node.getAttribute("data-file"));
+				}
 			});
-			rows.push(newRow);
-			commitEditorRows(frm, editor, rows);
-			renderJsonTableEditors(frm);
-			renderLivePreview(frm);
-		});
 
-		editorField.$wrapper.on("click", "[data-remove-row]", (event) => {
-			const fieldname = event.currentTarget.dataset.field;
-			const rowIndex = Number(event.currentTarget.dataset.row);
-			const editor = JSON_TABLE_EDITORS.find((item) => item.fieldname === fieldname);
-			if (!editor) {
-				return;
-			}
+			await frappe.call({
+				method: "designers.designers.doctype.commercial_proposal.commercial_proposal.set_client_send_attachments",
+				args: {
+					proposal_name: frm.doc.name,
+					selected_file_docnames: selected,
+				},
+			});
 
-			const rows = frm.__cp_json_editor_cache[fieldname] || getEditorRows(frm, editor);
-			rows.splice(rowIndex, 1);
-			commitEditorRows(frm, editor, rows);
-			renderJsonTableEditors(frm);
-			renderLivePreview(frm);
-		});
+			frappe.show_alert({
+				message: __("{0} file(s) selected for client email", [selected.length]),
+				indicator: "green",
+			});
+			dialog.hide();
+			await frm.reload_doc();
+		},
+	});
+
+	dialog.fields_dict.attachments_html.$wrapper.html(`
+		<div style="max-height: 60vh; overflow:auto; padding-right: 8px;">
+			${rows}
+		</div>
+	`);
+	dialog.show();
+}
+
+async function openClientEmailComposer(frm) {
+	if (frm.is_new() || !frm.doc.name) {
+		frappe.msgprint(__("Please save the document first."));
+		return;
 	}
+	if (Number(frm.doc.sent_to_client || 0) === 1) {
+		frappe.msgprint({
+			title: __("Письмо уже отправлено"),
+			indicator: "orange",
+			message: __("Для этого Commercial Proposal письмо клиенту уже было отправлено."),
+		});
+		return;
+	}
+
+	const response = await frappe.call({
+		method: "designers.designers.doctype.commercial_proposal.commercial_proposal.get_client_email_context",
+		args: { proposal_name: frm.doc.name },
+	});
+	const context = response.message || {};
+	const recipients = context.recipients || [];
+
+	if (!recipients.length) {
+		frappe.msgprint(__("Primary customer email is required."));
+		return;
+	}
+
+	const dialog = new frappe.ui.Dialog({
+		title: __("Письмо клиенту"),
+		size: "large",
+		fields: [
+			{
+				fieldname: "recipients",
+				fieldtype: "Data",
+				label: __("Кому"),
+				reqd: 1,
+				default: recipients.join(", "),
+			},
+			{
+				fieldname: "subject",
+				fieldtype: "Data",
+				label: __("Тема"),
+				reqd: 1,
+				default: context.subject || `Commercial Proposal: ${frm.doc.name}`,
+			},
+			{
+				fieldname: "message",
+				fieldtype: "Text Editor",
+				label: __("Сообщение"),
+				default: context.message || "",
+			},
+		],
+		primary_action_label: __("Отправить"),
+		primary_action: async (values) => {
+			await frappe.call({
+				method:
+					"designers.designers.doctype.commercial_proposal.commercial_proposal.send_client_email_from_ui",
+				args: {
+					proposal_name: frm.doc.name,
+					recipients: values.recipients,
+					subject: values.subject,
+					message: values.message || "",
+				},
+			});
+			frappe.show_alert({ message: __("Письмо отправлено"), indicator: "green" });
+			dialog.hide();
+			await frm.reload_doc();
+		},
+	});
+	dialog.show();
+}
+
+async function uploadOrReplaceProposalDocx(frm) {
+	if (frm.is_new() || !frm.doc.name) {
+		frappe.msgprint(__("Please save the document first."));
+		return false;
+	}
+
+	return new Promise((resolve) => {
+		frappe.prompt(
+			[
+				{
+					fieldname: "docx_file",
+					fieldtype: "Attach",
+					label: __("Proposal DOCX"),
+					reqd: 1,
+				},
+			],
+			async (values) => {
+				if (!isDocxUrl(values.docx_file)) {
+					frappe.msgprint(__("Please upload a .docx file."));
+					resolve(false);
+					return;
+				}
+
+				await frappe.call({
+					method: "designers.designers.doctype.commercial_proposal.commercial_proposal.attach_proposal_docx",
+					args: {
+						proposal_name: frm.doc.name,
+						file_url: values.docx_file,
+					},
+				});
+
+				await frm.reload_doc();
+				frappe.show_alert({ message: __("Proposal.docx attached"), indicator: "green" });
+				resolve(true);
+			},
+			__("Upload/Replace DOCX"),
+			__("Save")
+		);
+	});
+}
+
+function loadOnlyOfficeScript(documentServerUrl) {
+	const scriptUrl = `${documentServerUrl}/web-apps/apps/api/documents/api.js`;
+	if (window.DocsAPI) {
+		return Promise.resolve();
+	}
+	if (window.__onlyofficeScriptPromise) {
+		return window.__onlyofficeScriptPromise;
+	}
+
+	window.__onlyofficeScriptPromise = new Promise((resolve, reject) => {
+		const script = document.createElement("script");
+		script.src = scriptUrl;
+		script.onload = () => resolve();
+		script.onerror = () => reject(new Error(`Failed to load OnlyOffice script: ${scriptUrl}`));
+		document.head.appendChild(script);
+	});
+
+	return window.__onlyofficeScriptPromise;
+}
+
+async function openOnlyOfficeEditor(frm) {
+	if (frm.is_new() || !frm.doc.name) {
+		frappe.msgprint(__("Please save the document first."));
+		return;
+	}
+
+	if (!isDocxUrl(frm.doc.proposal_file)) {
+		const uploaded = await uploadOrReplaceProposalDocx(frm);
+		if (!uploaded || !isDocxUrl(frm.doc.proposal_file)) {
+			return;
+		}
+	}
+
+	const response = await frappe.call({
+		method: "designers.designers.doctype.commercial_proposal.commercial_proposal.get_onlyoffice_editor_config",
+		args: { proposal_name: frm.doc.name },
+	});
+	const payload = response.message || {};
+	if (!payload.document_server_url || !payload.config) {
+		frappe.msgprint(__("OnlyOffice is not configured."));
+		return;
+	}
+
+	await loadOnlyOfficeScript(payload.document_server_url);
+	if (!window.DocsAPI) {
+		frappe.throw(__("OnlyOffice API is not available."));
+	}
+
+	payload.config.events = {
+		...(payload.config.events || {}),
+		onError(event) {
+			console.error("OnlyOffice error", event);
+			const code = event?.data?.errorCode || event?.data?.code || "";
+			const description = event?.data?.errorDescription || event?.data?.message || "";
+			frappe.msgprint(
+				__("OnlyOffice error") + (code ? ` (${code})` : "") + (description ? `: ${description}` : "")
+			);
+		},
+	};
+
+	const editorContainerId = `onlyoffice-editor-${frappe.utils.get_random(8)}`;
+	const dialog = new frappe.ui.Dialog({
+		title: __("Edit DOCX"),
+		size: "extra-large",
+		fields: [{ fieldname: "onlyoffice_info", fieldtype: "HTML" }],
+		primary_action_label: __("Close"),
+		primary_action: async () => {
+			dialog.hide();
+			await frm.reload_doc();
+		},
+	});
+	dialog.$wrapper.addClass("cp-onlyoffice-dialog");
+
+	dialog.fields_dict.onlyoffice_info.$wrapper.html(`
+		<div class="cp-onlyoffice-root" style="height:100%; min-height:100%; display:flex; flex-direction:column;">
+			<div class="cp-onlyoffice-hint" style="margin-bottom: 8px; color: #6b7280; font-size: 12px; flex:0 0 auto;">
+				${__("Save in OnlyOffice, then close this dialog to refresh DOCX file")}
+			</div>
+			<div class="cp-onlyoffice-editor-slot" style="position:relative; flex:1 1 auto; min-height:0; width:100%;">
+				<div id="${editorContainerId}" style="position:absolute; inset:0; width:100%; height:100%; border: 1px solid #e5e7eb;"></div>
+			</div>
+		</div>
+	`);
+
+	dialog.$wrapper.find(".modal-dialog").css({
+		width: "98vw",
+		maxWidth: "98vw",
+		height: "98vh",
+		margin: "1vh auto",
+	});
+	dialog.$wrapper.find(".modal-content").css({
+		height: "98vh",
+		display: "flex",
+		flexDirection: "column",
+	});
+	dialog.$wrapper.find(".modal-body").css({
+		height: "calc(98vh - 95px)",
+		overflow: "hidden",
+		display: "flex",
+		flexDirection: "column",
+		paddingBottom: "0",
+	});
+	dialog.fields_dict.onlyoffice_info.$wrapper.css({
+		height: "100%",
+		display: "flex",
+		flexDirection: "column",
+	});
+
+	const forceModalFieldFullHeight = () => {
+		dialog.$wrapper
+			.find(
+				".form-layout, .form-page, .page-body, .form-section, .section-body, .form-column, .frappe-control[data-fieldname='onlyoffice_info'], .control-input-wrapper, .control-value, form, .cp-onlyoffice-root"
+			)
+			.each((_, node) => {
+				node.style.setProperty("height", "100%", "important");
+				node.style.setProperty("min-height", "100%", "important");
+				node.style.setProperty("max-height", "none", "important");
+				node.style.setProperty("display", "flex", "important");
+				node.style.setProperty("flex-direction", "column", "important");
+				node.style.setProperty("flex", "1 1 auto", "important");
+				node.style.setProperty("min-width", "0", "important");
+			});
+	};
+
+	const applyFullHeight = () => {
+		const editorEl = dialog.$wrapper.find(`#${editorContainerId}`).get(0);
+		const modalBodyEl = dialog.$wrapper.find(".modal-body").get(0);
+		const hintEl = dialog.$wrapper.find(".cp-onlyoffice-hint").get(0);
+		const slotEl = dialog.$wrapper.find(".cp-onlyoffice-editor-slot").get(0);
+		forceModalFieldFullHeight();
+		if (editorEl && slotEl) {
+			const bodyHeight = modalBodyEl?.clientHeight || Math.floor((window.innerHeight || 900) - 130);
+			const hintHeight = hintEl?.offsetHeight || 0;
+			const targetHeight = Math.max(640, bodyHeight - hintHeight - 8);
+			slotEl.style.setProperty("height", `${targetHeight}px`, "important");
+			slotEl.style.setProperty("min-height", `${targetHeight}px`, "important");
+			slotEl.style.setProperty("max-height", "none", "important");
+			slotEl.style.setProperty("flex", "1 1 auto", "important");
+			editorEl.style.setProperty("height", `${targetHeight}px`, "important");
+			editorEl.style.setProperty("min-height", `${targetHeight}px`, "important");
+			editorEl.style.setProperty("max-height", "none", "important");
+			editorEl.style.setProperty("flex", "1 1 auto", "important");
+			editorEl.style.setProperty("position", "absolute", "important");
+			editorEl.style.setProperty("inset", "0px", "important");
+		}
+	};
+
+	let docEditor = null;
+	const initEditor = () => {
+		try {
+			applyFullHeight();
+			docEditor = new window.DocsAPI.DocEditor(editorContainerId, payload.config);
+		} catch (error) {
+			dialog.hide();
+			frappe.throw(error.message || __("Failed to initialize OnlyOffice editor."));
+		}
+	};
+
+	dialog.$wrapper.one("shown.bs.modal", () => {
+		applyFullHeight();
+		setTimeout(initEditor, 50);
+	});
+	dialog.show();
+	$(window).on("resize.cp_onlyoffice_dialog", applyFullHeight);
+
+	dialog.$wrapper.on("hide.bs.modal", () => {
+		$(window).off("resize.cp_onlyoffice_dialog");
+		try {
+			docEditor?.destroyEditor?.();
+		} catch (error) {
+			// no-op
+		}
+	});
 }
 
 frappe.ui.form.on("Commercial Proposal", {
 	refresh(frm) {
-		const hideWorkflowActions = () => {
-			frm.page.wrapper
-				.find(".workflow-action, .btn-workflow, .workflow-button-area")
-				.closest("button, a, li, .btn-group")
-				.remove();
-		};
+		const composeEmailLabel = __("Письмо");
+		const uploadLabel = __("Загрузить КП");
+		const editLabel = __("Изменить КП");
+		const selectAttachmentsLabel = __("Вложить приложения");
+		const userRoles = Array.isArray(frappe.user_roles) ? frappe.user_roles : [];
+		const isBizManager = userRoles.includes("Biz Manager") || frappe.session.user === "Administrator";
+		const status = frm.doc.status || "";
+		const canComposeEmail = ["Admin Approved", "Sent"].includes(status) && isBizManager;
 
-		// Workflow transitions are executed from Tender Request only.
-		hideWorkflowActions();
-		setTimeout(hideWorkflowActions, 100);
-
-		if (!frm.__cp_live_preview_handler) {
-			frm.__cp_live_preview_handler = frappe.utils.debounce(() => renderLivePreview(frm), 200);
-			frm.$wrapper.on(
-				"input.cp-live-preview change.cp-live-preview",
-				"input, textarea, .ace_text-input",
-				frm.__cp_live_preview_handler
-			);
+		if (canComposeEmail) {
+			frm.add_custom_button(composeEmailLabel, () => openClientEmailComposer(frm));
+		}
+		frm.add_custom_button(uploadLabel, () => uploadOrReplaceProposalDocx(frm));
+		frm.add_custom_button(editLabel, () => openOnlyOfficeEditor(frm));
+		frm.add_custom_button(selectAttachmentsLabel, () => openClientAttachmentsDialog(frm));
+		if (!frm.__cp_actions_menu_bound) {
+			frm.__cp_actions_menu_bound = true;
+			if (canComposeEmail) {
+				frm.page.add_action_item(composeEmailLabel, () => openClientEmailComposer(frm));
+			}
+			frm.page.add_action_item(uploadLabel, () => uploadOrReplaceProposalDocx(frm));
+			frm.page.add_action_item(editLabel, () => openOnlyOfficeEditor(frm));
+			frm.page.add_action_item(selectAttachmentsLabel, () => openClientAttachmentsDialog(frm));
 		}
 
-		renderJsonTableEditors(frm);
-		renderLivePreview(frm);
+		if (frm.doc.proposal_file && isDocxUrl(frm.doc.proposal_file)) {
+			const openDocx = () => {
+				window.open(frm.doc.proposal_file, "_blank");
+			};
+			frm.page.add_action_item(__("Скачать КП"), openDocx);
+		}
 	},
-});
-
-PREVIEW_FIELDS.forEach((fieldname) => {
-	frappe.ui.form.on("Commercial Proposal", {
-		[fieldname](frm) {
-			if (JSON_TABLE_FIELDS.includes(fieldname)) {
-				renderJsonTableEditors(frm);
-			}
-			renderLivePreview(frm);
-		},
-	});
 });

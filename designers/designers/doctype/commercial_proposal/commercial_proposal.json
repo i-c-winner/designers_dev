@@ -7,67 +7,11 @@
  "engine": "InnoDB",
  "field_order": [
   "tender_request",
+  "version",
   "status",
+  "amended_from",
   "proposal_file",
-  "print_format_section",
-  "live_print_preview_html",
-  "city",
-  "document_date",
-  "recipient_company",
-  "recipient_role",
-  "recipient_name",
-  "offer_subject",
-  "company_name",
-  "project_object",
-  "document_theme",
-  "document_number",
-  "signatory_title",
-  "signatory_name",
-  "company_footer",
-  "contact_email",
-  "contact_phone",
-  "contact_next_step_label",
-  "contact_next_step",
-  "cover_letter_intro",
-  "cover_letter_outro",
-  "page2_intro",
-  "stages_total_label",
-  "stages_total_duration",
-  "stages_total_workdays",
-  "stages_note",
-  "objects_note",
-  "project_rows_note",
-  "working_rows_note",
-  "total_design_cost",
-  "total_design_cost_note",
-  "page5_title",
-  "page5_intro",
-  "page5_links_title",
-  "page5_terms_title",
-  "page5_extra_title",
-  "final_title",
-  "final_intro",
-  "guarantees_title",
-  "responsibility_title",
-  "json_section",
-  "json_tables_editor_html",
-  "company_services_json",
-  "competencies_json",
-  "offer_goals_json",
-  "stages_json",
-  "abbreviations_json",
-  "preproject_rows_json",
-  "project_rows_json",
-  "working_rows_page1_json",
-  "working_rows_page2_json",
-  "cost_summary_json",
-  "excluded_costs_json",
-  "page5_links_json",
-  "page5_terms_json",
-  "page5_extra_left_json",
-  "page5_extra_right_json",
-  "guarantees_json",
-  "responsibility_points_json",
+  "client_send_attachments_json",
   "sent_to_client",
   "sent_on"
  ],
@@ -81,12 +25,30 @@
    "reqd": 1
   },
   {
+   "allow_in_quick_entry": 1,
+   "fieldname": "version",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Version",
+   "read_only": 1
+  },
+  {
    "default": "Draft",
    "fieldname": "status",
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Status",
-   "options": "Draft\nUnder Approval\nApproved\nAdmin Review\nAdmin Approved\nSent\nRejected"
+   "options": "Draft\nUnder Approval\nApproved\nAdmin Review\nAdmin Approved\nSent\nRejected\nCancelled\nArchived"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Commercial Proposal",
+   "print_hide": 1,
+   "read_only": 1
   },
   {
    "fieldname": "proposal_file",
@@ -94,333 +56,11 @@
    "label": "Proposal File"
   },
   {
-   "fieldname": "print_format_section",
-   "fieldtype": "Section Break",
-   "label": "Commercial Proposal Print Format Data"
-  },
-  {
-   "fieldname": "live_print_preview_html",
-   "fieldtype": "HTML",
-   "label": "Live Print Preview"
-  },
-  {
-   "fieldname": "city",
-   "fieldtype": "Data",
-   "label": "City"
-  },
-  {
-   "fieldname": "document_date",
-   "fieldtype": "Date",
-   "label": "Document Date"
-  },
-  {
-   "fieldname": "recipient_company",
-   "fieldtype": "Data",
-   "label": "Recipient Company"
-  },
-  {
-   "fieldname": "recipient_role",
-   "fieldtype": "Data",
-   "label": "Recipient Role"
-  },
-  {
-   "fieldname": "recipient_name",
-   "fieldtype": "Data",
-   "label": "Recipient Name"
-  },
-  {
-   "fieldname": "offer_subject",
-   "fieldtype": "Data",
-   "label": "Offer Subject"
-  },
-  {
-   "fieldname": "company_name",
-   "fieldtype": "Data",
-   "label": "Company Name"
-  },
-  {
-   "fieldname": "project_object",
-   "fieldtype": "Data",
-   "label": "Project Object"
-  },
-  {
-   "fieldname": "document_theme",
-   "fieldtype": "Data",
-   "label": "Document Theme"
-  },
-  {
-   "fieldname": "document_number",
-   "fieldtype": "Data",
-   "label": "Document Number"
-  },
-  {
-   "fieldname": "signatory_title",
-   "fieldtype": "Data",
-   "label": "Signatory Title"
-  },
-  {
-   "fieldname": "signatory_name",
-   "fieldtype": "Data",
-   "label": "Signatory Name"
-  },
-  {
-   "fieldname": "company_footer",
-   "fieldtype": "Small Text",
-   "label": "Company Footer"
-  },
-  {
-   "fieldname": "contact_email",
-   "fieldtype": "Data",
-   "label": "Contact Email"
-  },
-  {
-   "fieldname": "contact_phone",
-   "fieldtype": "Data",
-   "label": "Contact Phone"
-  },
-  {
-   "fieldname": "contact_next_step_label",
-   "fieldtype": "Data",
-   "label": "Contact Next Step Label"
-  },
-  {
-   "fieldname": "contact_next_step",
-   "fieldtype": "Data",
-   "label": "Contact Next Step"
-  },
-  {
-   "fieldname": "cover_letter_intro",
-   "fieldtype": "Text Editor",
-   "label": "Cover Letter Intro"
-  },
-  {
-   "fieldname": "cover_letter_outro",
-   "fieldtype": "Text Editor",
-   "label": "Cover Letter Outro"
-  },
-  {
-   "fieldname": "page2_intro",
-   "fieldtype": "Text Editor",
-   "label": "Page 2 Intro"
-  },
-  {
-   "fieldname": "stages_total_label",
-   "fieldtype": "Data",
-   "label": "Stages Total Label"
-  },
-  {
-   "fieldname": "stages_total_duration",
-   "fieldtype": "Data",
-   "label": "Stages Total Duration"
-  },
-  {
-   "fieldname": "stages_total_workdays",
-   "fieldtype": "Data",
-   "label": "Stages Total Workdays"
-  },
-  {
-   "fieldname": "stages_note",
-   "fieldtype": "Small Text",
-   "label": "Stages Note"
-  },
-  {
-   "fieldname": "objects_note",
-   "fieldtype": "Small Text",
-   "label": "Objects Note"
-  },
-  {
-   "fieldname": "project_rows_note",
-   "fieldtype": "Small Text",
-   "label": "Project Rows Note"
-  },
-  {
-   "fieldname": "working_rows_note",
-   "fieldtype": "Small Text",
-   "label": "Working Rows Note"
-  },
-  {
-   "fieldname": "total_design_cost",
-   "fieldtype": "Data",
-   "label": "Total Design Cost"
-  },
-  {
-   "fieldname": "total_design_cost_note",
-   "fieldtype": "Small Text",
-   "label": "Total Design Cost Note"
-  },
-  {
-   "fieldname": "page5_title",
-   "fieldtype": "Data",
-   "label": "Page 5 Title"
-  },
-  {
-   "fieldname": "page5_intro",
-   "fieldtype": "Text Editor",
-   "label": "Page 5 Intro"
-  },
-  {
-   "fieldname": "page5_links_title",
-   "fieldtype": "Data",
-   "label": "Page 5 Links Title"
-  },
-  {
-   "fieldname": "page5_terms_title",
-   "fieldtype": "Data",
-   "label": "Page 5 Terms Title"
-  },
-  {
-   "fieldname": "page5_extra_title",
-   "fieldtype": "Data",
-   "label": "Page 5 Extra Title"
-  },
-  {
-   "fieldname": "final_title",
-   "fieldtype": "Data",
-   "label": "Final Title"
-  },
-  {
-   "fieldname": "final_intro",
-   "fieldtype": "Text Editor",
-   "label": "Final Intro"
-  },
-  {
-   "fieldname": "guarantees_title",
-   "fieldtype": "Data",
-   "label": "Guarantees Title"
-  },
-  {
-   "fieldname": "responsibility_title",
-   "fieldtype": "Data",
-   "label": "Responsibility Title"
-  },
-  {
-   "fieldname": "json_section",
-   "fieldtype": "Section Break",
-   "label": "Print Format JSON Collections"
-  },
-  {
-   "fieldname": "json_tables_editor_html",
-   "fieldtype": "HTML",
-   "label": "JSON Tables Editor"
-  },
-  {
-   "description": "JSON array of strings",
-   "fieldname": "company_services_json",
-   "fieldtype": "Code",
-   "label": "Company Services JSON",
-   "options": "JSON"
-  },
-  {
-   "description": "JSON array of objects: {\"title\":\"...\", \"description\":\"...\"}",
-   "fieldname": "competencies_json",
-   "fieldtype": "Code",
-   "label": "Competencies JSON",
-   "options": "JSON"
-  },
-  {
-   "description": "JSON array of strings",
-   "fieldname": "offer_goals_json",
-   "fieldtype": "Code",
-   "label": "Offer Goals JSON",
-   "options": "JSON"
-  },
-  {
-   "description": "JSON array of objects: {\"code\":\"...\", \"duration\":\"...\", \"workdays\":\"...\"}",
-   "fieldname": "stages_json",
-   "fieldtype": "Code",
-   "label": "Stages JSON",
-   "options": "JSON"
-  },
-  {
-   "description": "JSON array of objects: {\"code\":\"...\", \"text\":\"...\"}",
-   "fieldname": "abbreviations_json",
-   "fieldtype": "Code",
-   "label": "Abbreviations JSON",
-   "options": "JSON"
-  },
-  {
-   "description": "JSON array of objects: {\"index\":\"...\", \"name\":\"...\", \"code\":\"...\", \"price\":\"...\"}",
-   "fieldname": "preproject_rows_json",
-   "fieldtype": "Code",
-   "label": "Preproject Rows JSON",
-   "options": "JSON"
-  },
-  {
-   "description": "JSON array of objects: {\"index\":\"...\", \"name\":\"...\", \"code\":\"...\", \"price\":\"...\"}",
-   "fieldname": "project_rows_json",
-   "fieldtype": "Code",
-   "label": "Project Rows JSON",
-   "options": "JSON"
-  },
-  {
-   "description": "JSON array of objects: {\"index\":\"...\", \"name\":\"...\", \"code\":\"...\", \"price\":\"...\"}",
-   "fieldname": "working_rows_page1_json",
-   "fieldtype": "Code",
-   "label": "Working Rows Page 1 JSON",
-   "options": "JSON"
-  },
-  {
-   "description": "JSON array of objects: {\"index\":\"...\", \"name\":\"...\", \"code\":\"...\"}",
-   "fieldname": "working_rows_page2_json",
-   "fieldtype": "Code",
-   "label": "Working Rows Page 2 JSON",
-   "options": "JSON"
-  },
-  {
-   "description": "JSON array of objects: {\"label\":\"...\", \"value\":\"...\"}",
-   "fieldname": "cost_summary_json",
-   "fieldtype": "Code",
-   "label": "Cost Summary JSON",
-   "options": "JSON"
-  },
-  {
-   "description": "JSON array of strings",
-   "fieldname": "excluded_costs_json",
-   "fieldtype": "Code",
-   "label": "Excluded Costs JSON",
-   "options": "JSON"
-  },
-  {
-   "description": "JSON array of objects: {\"label\":\"...\", \"url\":\"...\"}",
-   "fieldname": "page5_links_json",
-   "fieldtype": "Code",
-   "label": "Page 5 Links JSON",
-   "options": "JSON"
-  },
-  {
-   "description": "JSON array of strings",
-   "fieldname": "page5_terms_json",
-   "fieldtype": "Code",
-   "label": "Page 5 Terms JSON",
-   "options": "JSON"
-  },
-  {
-   "description": "JSON array of strings",
-   "fieldname": "page5_extra_left_json",
-   "fieldtype": "Code",
-   "label": "Page 5 Extra Left JSON",
-   "options": "JSON"
-  },
-  {
-   "description": "JSON array of strings",
-   "fieldname": "page5_extra_right_json",
-   "fieldtype": "Code",
-   "label": "Page 5 Extra Right JSON",
-   "options": "JSON"
-  },
-  {
-   "description": "JSON array of strings",
-   "fieldname": "guarantees_json",
-   "fieldtype": "Code",
-   "label": "Guarantees JSON",
-   "options": "JSON"
-  },
-  {
-   "description": "JSON array of strings",
-   "fieldname": "responsibility_points_json",
-   "fieldtype": "Code",
-   "label": "Responsibility Points JSON",
-   "options": "JSON"
+   "fieldname": "client_send_attachments_json",
+   "fieldtype": "Long Text",
+   "hidden": 1,
+   "label": "Client Send Attachments JSON",
+   "read_only": 1
   },
   {
    "default": "0",
@@ -438,6 +78,7 @@
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [],
  "modified": "2026-04-03 10:55:00.000000",
  "modified_by": "Administrator",

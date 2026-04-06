@@ -56,33 +56,33 @@ def ensure_designers_workspace():
     ws.parent_page = ""
     ws.content = (
         '[{"id":"designers_header","type":"header","data":{"text":"<span class=\\"h4\\"><b>Designers</b></span>","col":12}},'
-        '{"id":"designers_shortcut_tender_request","type":"shortcut","data":{"shortcut_name":"Tender Request","col":4}},'
-        '{"id":"designers_shortcut_tender_budget","type":"shortcut","data":{"shortcut_name":"Tender Budget","col":4}},'
-        '{"id":"designers_shortcut_commercial_proposal","type":"shortcut","data":{"shortcut_name":"Commercial Proposal","col":4}},'
-        '{"id":"designers_card_links","type":"card","data":{"card_name":"Link","col":12}}]'
+        '{"id":"designers_shortcut_tender_request","type":"shortcut","data":{"shortcut_name":"Проект","col":4}},'
+        '{"id":"designers_shortcut_tender_budget","type":"shortcut","data":{"shortcut_name":"Бюджет","col":4}},'
+        '{"id":"designers_shortcut_commercial_proposal","type":"shortcut","data":{"shortcut_name":"Коммерческое предложение","col":4}},'
+        '{"id":"designers_card_links","type":"card","data":{"card_name":"Ссылки","col":12}}]'
     )
 
     ws.set("links", [])
-    ws.append("links", {"type": "Link", "label": "Tender Request", "link_type": "DocType", "link_to": "Tender Request"})
-    ws.append("links", {"type": "Link", "label": "Tender Budget", "link_type": "DocType", "link_to": "Tender Budget"})
+    ws.append("links", {"type": "Link", "label": "Проект", "link_type": "DocType", "link_to": "Tender Request"})
+    ws.append("links", {"type": "Link", "label": "Бюджет", "link_type": "DocType", "link_to": "Tender Budget"})
     ws.append(
         "links",
         {
             "type": "Link",
-            "label": "Commercial Proposal",
+            "label": "Коммерческое предложение",
             "link_type": "DocType",
             "link_to": "Commercial Proposal",
         },
     )
 
     ws.set("shortcuts", [])
-    ws.append("shortcuts", {"type": "DocType", "label": "Tender Request", "link_to": "Tender Request", "doc_view": "List"})
-    ws.append("shortcuts", {"type": "DocType", "label": "Tender Budget", "link_to": "Tender Budget", "doc_view": "List"})
+    ws.append("shortcuts", {"type": "DocType", "label": "Проект", "link_to": "Tender Request", "doc_view": "List"})
+    ws.append("shortcuts", {"type": "DocType", "label": "Бюджет", "link_to": "Tender Budget", "doc_view": "List"})
     ws.append(
         "shortcuts",
         {
             "type": "DocType",
-            "label": "Commercial Proposal",
+            "label": "Коммерческое предложение",
             "link_to": "Commercial Proposal",
             "doc_view": "List",
         },
@@ -115,16 +115,16 @@ def ensure_designers_workspace_sidebar():
     sidebar.append("items", {"label": "Home", "type": "Link", "link_type": "Workspace", "link_to": "Designers"})
     sidebar.append(
         "items",
-        {"label": "Tender Request", "type": "Link", "link_type": "DocType", "link_to": "Tender Request"},
+        {"label": "Проект", "type": "Link", "link_type": "DocType", "link_to": "Tender Request"},
     )
     sidebar.append(
         "items",
-        {"label": "Tender Budget", "type": "Link", "link_type": "DocType", "link_to": "Tender Budget"},
+        {"label": "Бюджет", "type": "Link", "link_type": "DocType", "link_to": "Tender Budget"},
     )
     sidebar.append(
         "items",
         {
-            "label": "Commercial Proposal",
+            "label": "Коммерческое предложение",
             "type": "Link",
             "link_type": "DocType",
             "link_to": "Commercial Proposal",

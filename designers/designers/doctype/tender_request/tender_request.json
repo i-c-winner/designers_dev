@@ -22,6 +22,7 @@
   "deadline",
   "status",
   "assigned_to",
+  "amended_from",
   "access_section",
   "access_users",
   "budget_version",
@@ -96,13 +97,23 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Status",
-   "options": "New Request\nIn Progress\nUnder Review\nRejected\nBudget Drafting\nBudget Director Review\nBudget CEO Review\nBudget Approved\nProposal Drafting\nProposal Review\nProposal Approved\nSent to Client\nArchived"
+   "options": "New Request\nIn Progress\nUnder Review\nRejected\nCancelled\nBudget Drafting\nBudget Director Review\nBudget CEO Review\nBudget Approved\nProposal Drafting\nProposal Review\nProposal Approved\nSent to Client\nArchived"
   },
   {
    "fieldname": "assigned_to",
    "fieldtype": "Link",
    "label": "Assigned To",
    "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Tender Request",
+   "print_hide": 1,
    "read_only": 1
   },
   {
@@ -153,6 +164,7 @@
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [
   {
    "group": "Documents",

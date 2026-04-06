@@ -37,16 +37,16 @@ def execute():
     sidebar.append("items", {"label": "Home", "type": "Link", "link_type": "Workspace", "link_to": "Designers"})
     sidebar.append(
         "items",
-        {"label": "Tender Request", "type": "Link", "link_type": "DocType", "link_to": "Tender Request"},
+        {"label": "Проект", "type": "Link", "link_type": "DocType", "link_to": "Tender Request"},
     )
     sidebar.append(
         "items",
-        {"label": "Tender Budget", "type": "Link", "link_type": "DocType", "link_to": "Tender Budget"},
+        {"label": "Бюджет", "type": "Link", "link_type": "DocType", "link_to": "Tender Budget"},
     )
     sidebar.append(
         "items",
         {
-            "label": "Commercial Proposal",
+            "label": "Коммерческое предложение",
             "type": "Link",
             "link_type": "DocType",
             "link_to": "Commercial Proposal",

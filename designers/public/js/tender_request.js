@@ -83,73 +83,73 @@ frappe.ui.form.on("Tender Request", {
     };
 
     if (v.send_budget_to_director) {
-      frm.add_custom_button(__("Send Budget To Director"), () =>
+      frm.add_custom_button(__("Бюджет на согласование"), () =>
         callAction(
           "designers.designers.doctype.tender_request.tender_request.send_budget_to_director",
-          "Budget sent to director",
+          "Бюджет отправлен на согласование",
         ),
       );
     }
 
     if (v.approve_director) {
-      frm.add_custom_button(__("Approve Director"), () =>
+      frm.add_custom_button(__("Согласовать бюджет"), () =>
         callAction(
           "designers.designers.doctype.tender_request.tender_request.approve_budget_director",
-          "Director approved budget",
+          "Бюджет согласован",
         ),
       );
     }
 
     if (v.approve_budget) {
-      frm.add_custom_button(__("Approve Budget"), () =>
+      frm.add_custom_button(__("Согласовать бюджет"), () =>
         callAction(
           "designers.designers.doctype.tender_request.tender_request.approve_budget_ceo",
-          "Budget approved",
+          "Бюджет согласован",
         ),
       );
     }
 
     if (v.submit_proposal) {
-      frm.add_custom_button(__("Submit Proposal"), () =>
+      frm.add_custom_button(__("КП на согласование"), () =>
         callAction(
           "designers.designers.doctype.tender_request.tender_request.submit_proposal_for_approval",
-          "Proposal sent for approval",
+          "КП отправлено на согласование",
         ),
       );
     }
 
     if (v.approve_proposal) {
-      frm.add_custom_button(__("Approve Proposal"), () =>
+      frm.add_custom_button(__("Согласовать КП"), () =>
         callAction(
           "designers.designers.doctype.tender_request.tender_request.approve_proposal",
-          "Proposal approved",
+          "КП согласовано",
         ),
       );
     }
 
     if (v.send_to_admin) {
-      frm.add_custom_button(__("Send To Admin"), () =>
+      frm.add_custom_button(__("Согласовать КП"), () =>
         callAction(
           "designers.designers.doctype.tender_request.tender_request.send_proposal_to_admin",
-          "Proposal sent to admin",
+          "КП отправлено на согласование",
         ),
       );
     }
 
     if (v.approve_by_admin) {
-      frm.add_custom_button(__("Approve By Admin"), () =>
+      frm.add_custom_button(__("КП на согласование"), () =>
         callAction(
           "designers.designers.doctype.tender_request.tender_request.approve_proposal_by_admin",
-          "Proposal approved by admin",
+          "КП согласовано",
         ),
       );
     }
 
     if (v.send_to_client) {
-      frm.add_custom_button(__("Send To Client"), () =>
+      frm.add_custom_button(__("Отправить КП клиенту"), () =>
         callAction(
           "designers.designers.doctype.tender_request.tender_request.send_to_client",
-          "Sent to client",
+          "КП отправлено клиенту",
         ),
       );
     }
