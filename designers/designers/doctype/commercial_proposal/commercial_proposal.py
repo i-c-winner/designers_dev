@@ -172,29 +172,6 @@ def _build_client_email_attachments(proposal: CommercialProposal) -> tuple[list[
     attachments: list[dict] = []
     preselected: list[str] = []
 
-    # Always include main proposal file from Proposal File field when present.
-    proposal_file_url = proposal.get("proposal_file")
-    if proposal_file_url:
-        row = frappe.db.get_value(
-            "File",
-            {
-                "attached_to_doctype": "Commercial Proposal",
-                "attached_to_name": proposal.name,
-                "file_url": proposal_file_url,
-            },
-            ["name", "file_name", "file_url"],
-            as_dict=True,
-        )
-        if row and row.name:
-            attachments.append(
-                {
-                    "name": row.name,
-                    "file_name": row.file_name or row.file_url or row.name,
-                    "file_url": row.file_url,
-                }
-            )
-            preselected.append(row.name)
-
     selected_extra = _get_selected_client_attachment_docnames(proposal)
     if selected_extra:
         rows = frappe.get_all(
@@ -232,6 +209,19 @@ def _build_client_email_attachments(proposal: CommercialProposal) -> tuple[list[
 
     preselected = [name for name in preselected if name in seen]
     return deduped, preselected
+
+
+def _build_print_format_attachment(proposal: CommercialProposal) -> dict:
+    pdf_bytes = frappe.get_print(
+        "Commercial Proposal",
+        proposal.name,
+        print_format="Commercial Proposal",
+        as_pdf=True,
+    )
+    return {
+        "fname": f"{proposal.name}.pdf",
+        "fcontent": pdf_bytes,
+    }
 
 
 def _assert_client_email_sender_role() -> None:
@@ -312,7 +302,8 @@ def send_client_email_from_ui(
         frappe.throw("At least one recipient email is required")
 
     attachments, _preselected = _build_client_email_attachments(proposal)
-    file_attachments = [{"fid": row["name"]} for row in attachments if row.get("name")]
+    file_attachments = [_build_print_format_attachment(proposal)]
+    file_attachments.extend({"fid": row["name"]} for row in attachments if row.get("name"))
 
     frappe.sendmail(
         recipients=recipient_list,

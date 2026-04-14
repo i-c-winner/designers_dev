@@ -111,6 +111,127 @@
   ],
   "transitions": [
    {
+    "action": "Отправить в архив",
+    "allow_self_approval": 1,
+    "allowed": "Biz Admin",
+    "condition": null,
+    "next_state": "Archived",
+    "send_email_to_creator": 0,
+    "state": "Under CEO Review",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Согласовать бюджет",
+    "allow_self_approval": 1,
+    "allowed": "Biz Manager",
+    "condition": null,
+    "next_state": "Under CEO Review",
+    "send_email_to_creator": 0,
+    "state": "Under Director Review",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Отправить в архив",
+    "allow_self_approval": 1,
+    "allowed": "Biz Manager",
+    "condition": null,
+    "next_state": "Archived",
+    "send_email_to_creator": 0,
+    "state": "Under Director Review",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Согласовать бюджет",
+    "allow_self_approval": 1,
+    "allowed": "Biz Admin",
+    "condition": null,
+    "next_state": "Approved",
+    "send_email_to_creator": 0,
+    "state": "Under CEO Review",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Отправить в архив",
+    "allow_self_approval": 1,
+    "allowed": "Biz Manager",
+    "condition": null,
+    "next_state": "Archived",
+    "send_email_to_creator": 0,
+    "state": "Draft",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Отклонить бюджет",
+    "allow_self_approval": 1,
+    "allowed": "Biz Manager",
+    "condition": null,
+    "next_state": "Rejected",
+    "send_email_to_creator": 0,
+    "state": "Under Director Review",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Отправить в архив",
+    "allow_self_approval": 1,
+    "allowed": "Biz Admin",
+    "condition": null,
+    "next_state": "Archived",
+    "send_email_to_creator": 0,
+    "state": "Rejected",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Отправить в архив",
+    "allow_self_approval": 1,
+    "allowed": "Biz Admin",
+    "condition": null,
+    "next_state": "Archived",
+    "send_email_to_creator": 0,
+    "state": "Approved",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Cancel Budget",
+    "allow_self_approval": 1,
+    "allowed": "Biz Admin",
+    "condition": null,
+    "next_state": "Cancelled",
+    "send_email_to_creator": 0,
+    "state": "Archived",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Бюджет на согласование",
+    "allow_self_approval": 1,
+    "allowed": "Biz User",
+    "condition": null,
+    "next_state": "Under Director Review",
+    "send_email_to_creator": 0,
+    "state": "Draft",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Отклонить бюджет",
+    "allow_self_approval": 1,
+    "allowed": "Biz Admin",
+    "condition": null,
+    "next_state": "Rejected",
+    "send_email_to_creator": 0,
+    "state": "Under CEO Review",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
     "action": "Бюджет на согласование",
     "allow_self_approval": 1,
     "allowed": "Biz User",
@@ -375,6 +496,116 @@
    }
   ],
   "transitions": [
+   {
+    "action": "Cancel Proposal",
+    "allow_self_approval": 1,
+    "allowed": "Biz Admin",
+    "condition": null,
+    "next_state": "Cancelled",
+    "send_email_to_creator": 0,
+    "state": "Archived",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "КП на согласование",
+    "allow_self_approval": 1,
+    "allowed": "Biz User",
+    "condition": null,
+    "next_state": "Under Approval",
+    "send_email_to_creator": 0,
+    "state": "Draft",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "В архив",
+    "allow_self_approval": 1,
+    "allowed": "Biz Manager",
+    "condition": null,
+    "next_state": "Archived",
+    "send_email_to_creator": 0,
+    "state": "Rejected",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Отправить КП клиенту",
+    "allow_self_approval": 1,
+    "allowed": "Biz Manager",
+    "condition": null,
+    "next_state": "Sent",
+    "send_email_to_creator": 0,
+    "state": "Admin Approved",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Отклонить КП",
+    "allow_self_approval": 1,
+    "allowed": "Biz Admin",
+    "condition": null,
+    "next_state": "Rejected",
+    "send_email_to_creator": 0,
+    "state": "Admin Review",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Согласовать КП",
+    "allow_self_approval": 1,
+    "allowed": "Biz Manager",
+    "condition": null,
+    "next_state": "Approved",
+    "send_email_to_creator": 0,
+    "state": "Under Approval",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "В архив",
+    "allow_self_approval": 1,
+    "allowed": "Biz Manager",
+    "condition": null,
+    "next_state": "Archived",
+    "send_email_to_creator": 0,
+    "state": "Sent",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "КП на согласование",
+    "allow_self_approval": 1,
+    "allowed": "Biz Admin",
+    "condition": null,
+    "next_state": "Admin Approved",
+    "send_email_to_creator": 0,
+    "state": "Admin Review",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Согласовать КП",
+    "allow_self_approval": 1,
+    "allowed": "Biz Admin",
+    "condition": null,
+    "next_state": "Admin Review",
+    "send_email_to_creator": 0,
+    "state": "Approved",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Отклонить КП",
+    "allow_self_approval": 1,
+    "allowed": "Biz Manager",
+    "condition": null,
+    "next_state": "Rejected",
+    "send_email_to_creator": 0,
+    "state": "Under Approval",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
    {
     "action": "КП на согласование",
     "allow_self_approval": 1,
@@ -699,6 +930,160 @@
    }
   ],
   "transitions": [
+   {
+    "action": "Отклонить",
+    "allow_self_approval": 1,
+    "allowed": "Biz Manager",
+    "condition": null,
+    "next_state": "Rejected",
+    "send_email_to_creator": 0,
+    "state": "Budget Drafting",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "В архив",
+    "allow_self_approval": 1,
+    "allowed": "Biz Manager",
+    "condition": null,
+    "next_state": "Archived",
+    "send_email_to_creator": 0,
+    "state": "Rejected",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Отменить КП",
+    "allow_self_approval": 1,
+    "allowed": "Biz Manager",
+    "condition": null,
+    "next_state": "Cancelled",
+    "send_email_to_creator": 0,
+    "state": "Archived",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Создать бюджет",
+    "allow_self_approval": 1,
+    "allowed": "Biz Manager",
+    "condition": null,
+    "next_state": "Budget Drafting",
+    "send_email_to_creator": 0,
+    "state": "Under Review",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Отклонить",
+    "allow_self_approval": 1,
+    "allowed": "Biz Manager",
+    "condition": null,
+    "next_state": "Rejected",
+    "send_email_to_creator": 0,
+    "state": "Budget Director Review",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Отклонить",
+    "allow_self_approval": 1,
+    "allowed": "Biz Admin",
+    "condition": null,
+    "next_state": "Rejected",
+    "send_email_to_creator": 0,
+    "state": "Budget CEO Review",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Отклонить",
+    "allow_self_approval": 1,
+    "allowed": "Biz Manager",
+    "condition": null,
+    "next_state": "Rejected",
+    "send_email_to_creator": 0,
+    "state": "Proposal Approved",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Отклонить",
+    "allow_self_approval": 1,
+    "allowed": "Biz Manager",
+    "condition": null,
+    "next_state": "Rejected",
+    "send_email_to_creator": 0,
+    "state": "Proposal Review",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Отклонить",
+    "allow_self_approval": 1,
+    "allowed": "Biz Manager",
+    "condition": null,
+    "next_state": "Rejected",
+    "send_email_to_creator": 0,
+    "state": "Proposal Drafting",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "В архив",
+    "allow_self_approval": 1,
+    "allowed": "Biz Manager",
+    "condition": null,
+    "next_state": "Archived",
+    "send_email_to_creator": 0,
+    "state": "Proposal Approved",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Принять в работу",
+    "allow_self_approval": 1,
+    "allowed": "Biz User",
+    "condition": null,
+    "next_state": "In Progress",
+    "send_email_to_creator": 0,
+    "state": "New Request",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "В архив",
+    "allow_self_approval": 1,
+    "allowed": "Biz Manager",
+    "condition": null,
+    "next_state": "Archived",
+    "send_email_to_creator": 0,
+    "state": "Sent to Client",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Отклонить",
+    "allow_self_approval": 1,
+    "allowed": "Biz Manager",
+    "condition": null,
+    "next_state": "Rejected",
+    "send_email_to_creator": 0,
+    "state": "Under Review",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "На согласование",
+    "allow_self_approval": 1,
+    "allowed": "Biz User",
+    "condition": null,
+    "next_state": "Under Review",
+    "send_email_to_creator": 0,
+    "state": "In Progress",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
    {
     "action": "Принять в работу",
     "allow_self_approval": 1,
