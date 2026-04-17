@@ -43,11 +43,7 @@ fixtures = [
 	},
 	{
 		"doctype": "Notification",
-		# лучше фиксированный список имен, а не is_standard=0
-		"filters": [["name", "in", [
-			"Integration Request",
-			"Error Log"
-		]]],
+		"filters": [["is_standard", "=", 0]],
 	},
 	{
 		"doctype": "Workflow",
@@ -57,21 +53,45 @@ fixtures = [
 			"Commercial Proposal Workflow",
 		]]],
 	},
-	# УБРАТЬ Workflow Transition, чтобы не плодить дубли
 	{
 		"doctype": "Workflow State",
 		"filters": [["workflow_state_name", "in", [
-			"Draft", "Approved", "Rejected", "Cancelled",
-			"New Request", "In Progress", "Under Review",
-			"Budget Drafting", "Budget Director Review", "Budget CEO Review", "Budget Approved",
-			"Proposal Drafting", "Proposal Review", "Proposal Approved", "Sent to Client", "Archived",
-			"Under Director Review", "Under CEO Review", "Under Approval", "Admin Review", "Admin Approved", "Sent"
+			"Draft",
+			"Review 1 level",
+			"Review 2 level",
+			"Approved",
+			"Rejected",
+			"Cancelled",
+			"Archived",
+			"New Request",
+			"In Progress",
+			"Under Review",
+			"Budget Drafting",
+			"Budget Director Review",
+			"Budget CEO Review",
+			"Budget Approved",
+			"Proposal Drafting",
+			"Proposal Review",
+			"Proposal Approved",
+			"Sent to Client",
+			"Under Director Review",
+			"Under CEO Review",
+			"Under Approval",
+			"Admin Review",
+			"Admin Approved",
+			"Sent",
 		]]],
 	},
 	{
 		"doctype": "Workflow Action Master",
 		"filters": [["workflow_action_name", "in", [
-			"Согласовать", "Отклонить", "Отправить в архив", "Cancel Budget"
+			"На согласование",
+			"Согласовать",
+			"Отклонить",
+			"Арихивировать",
+			"Вернуть в работу",
+			"Отправить в архив",
+			"Cancel Budget",
 		]]],
 	},
 ]
