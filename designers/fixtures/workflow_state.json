@@ -21,6 +21,24 @@
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
+  "modified": "2026-04-16 21:34:44.073782",
+  "name": "Review 1 level",
+  "style": "",
+  "workflow_state_name": "Review 1 level"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-04-16 21:34:53.904030",
+  "name": "Review 2 level",
+  "style": "",
+  "workflow_state_name": "Review 2 level"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
   "modified": "2026-03-30 23:41:01.296306",
   "name": "Draft",
   "style": "Primary",
