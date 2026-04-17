@@ -43,74 +43,36 @@ fixtures = [
 	},
 	{
 		"doctype": "Notification",
-		"filters": [
-			[
-				"is_standard",
-				"=",
-				0,
-			]
-		],
+		# лучше фиксированный список имен, а не is_standard=0
+		"filters": [["name", "in", [
+			"Integration Request",
+			"Error Log"
+		]]],
 	},
 	{
 		"doctype": "Workflow",
-		"filters": [
-			[
-				"name",
-				"in",
-				[
-					"Tender Request Workflow",
-					"Tender Budget Workflow",
-					"Commercial Proposal Workflow",
-				],
-			]
-		],
+		"filters": [["name", "in", [
+			"Tender Request Workflow",
+			"Tender Budget Workflow",
+			"Commercial Proposal Workflow",
+		]]],
 	},
-	{
-		"doctype": "Workflow Transition",
-		"filters": [
-			[
-				"parent",
-				"in",
-				[
-					"Tender Request Workflow",
-					"Tender Budget Workflow",
-					"Commercial Proposal Workflow",
-				],
-			]
-		],
-	},
+	# УБРАТЬ Workflow Transition, чтобы не плодить дубли
 	{
 		"doctype": "Workflow State",
-		"filters": [
-			[
-				"workflow_state_name",
-				"in",
-				[
-					"New Request",
-					"In Progress",
-					"Under Review",
-					"Rejected",
-					"Cancelled",
-					"Budget Drafting",
-					"Budget Director Review",
-					"Budget CEO Review",
-					"Budget Approved",
-					"Proposal Drafting",
-					"Proposal Review",
-					"Proposal Approved",
-					"Sent to Client",
-					"Archived",
-					"Draft",
-					"Under Director Review",
-					"Under CEO Review",
-					"Approved",
-					"Under Approval",
-					"Admin Review",
-					"Admin Approved",
-					"Sent",
-				],
-			]
-		],
+		"filters": [["workflow_state_name", "in", [
+			"Draft", "Approved", "Rejected", "Cancelled",
+			"New Request", "In Progress", "Under Review",
+			"Budget Drafting", "Budget Director Review", "Budget CEO Review", "Budget Approved",
+			"Proposal Drafting", "Proposal Review", "Proposal Approved", "Sent to Client", "Archived",
+			"Under Director Review", "Under CEO Review", "Under Approval", "Admin Review", "Admin Approved", "Sent"
+		]]],
+	},
+	{
+		"doctype": "Workflow Action Master",
+		"filters": [["workflow_action_name", "in", [
+			"Согласовать", "Отклонить", "Отправить в архив", "Cancel Budget"
+		]]],
 	},
 ]
 
