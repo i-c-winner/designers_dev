@@ -19,10 +19,13 @@ from frappe.utils import now_datetime
 class CommercialProposal(Document):
     PARENT_STATUS_BY_PROPOSAL_STATUS = {
         "Draft": "Proposal Drafting",
-        "Under Approval": "Proposal Review",
+        "Prapare": "Proposal Drafting",
+        "In Progress": "Proposal Drafting",
+        "Review 1 level": "Proposal Review",
+        "Review 2 level": "Proposal Review",
         "Approved": "Proposal Review",
-        "Admin Review": "Proposal Review",
-        "Admin Approved": "Proposal Approved",
+        "Admin Review": "Proposal Review",   # backward compatibility
+        "Admin Approved": "Proposal Approved",  # backward compatibility
         "Sent": "Sent to Client",
         "Rejected": "Rejected",
         "Cancelled": "Proposal Drafting",
@@ -54,6 +57,10 @@ class CommercialProposal(Document):
         # Keep compatibility with sites where these fields were removed from DocType.
         if self.meta.has_field("tender_budget"):
             tender_budget = self.get("tender_budget")
+            if tender_budget and self.tender_request:
+                budget_parent = frappe.db.get_value("Tender Budget", tender_budget, "tender_request")
+                if budget_parent and budget_parent != self.tender_request:
+                    frappe.throw("Tender Budget must belong to the same Tender Request")
             if tender_budget and self.meta.has_field("budget_version"):
                 self.budget_version = frappe.db.get_value("Tender Budget", tender_budget, "version")
 
@@ -117,6 +124,7 @@ class CommercialProposal(Document):
                 self._archive_previous_versions()
 
         parent_status = self.PARENT_STATUS_BY_PROPOSAL_STATUS.get(self.status)
+        frappe.db.set_value("Tender Request", self.tender_request, "proposal_version", self.version, update_modified=False)
         frappe.db.set_value("Tender Request", self.tender_request, "commercial_proposal", self.name, update_modified=False)
         if parent_status:
             frappe.db.set_value("Tender Request", self.tender_request, "status", parent_status, update_modified=False)
@@ -125,6 +133,21 @@ class CommercialProposal(Document):
         if self.status == "Sent" and not int(self.get("sent_to_client") or 0):
             self.db_set("sent_to_client", 1, update_modified=False)
             self.db_set("sent_on", now_datetime(), update_modified=False)
+
+    def on_trash(self):
+        # Break circular link so Tender Request can be deleted independently.
+        if not self.tender_request or not frappe.db.exists("Tender Request", self.tender_request):
+            return
+
+        parent = self.tender_request
+        updates = {}
+        if frappe.db.get_value("Tender Request", parent, "commercial_proposal") == self.name:
+            updates["commercial_proposal"] = None
+        if frappe.db.get_value("Tender Request", parent, "proposal_version") == self.version:
+            updates["proposal_version"] = None
+
+        if updates:
+            frappe.db.set_value("Tender Request", parent, updates, update_modified=False)
 
 
 def _get_selected_client_attachment_docnames(proposal: CommercialProposal) -> list[str]:

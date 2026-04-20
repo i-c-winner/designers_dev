@@ -3,6 +3,51 @@
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
+  "modified": "2026-04-16 21:25:36.320718",
+  "name": "Cancelled",
+  "style": "",
+  "workflow_state_name": "Cancelled"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "ok-sign",
+  "modified": "2026-03-30 23:40:37.240539",
+  "name": "Approved",
+  "style": "Success",
+  "workflow_state_name": "Approved"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-04-20 21:13:11.684819",
+  "name": "Proposal Approved",
+  "style": "Primary",
+  "workflow_state_name": "Proposal Approved"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-04-20 21:40:31.642561",
+  "name": "Proposal Review",
+  "style": "Success",
+  "workflow_state_name": "Proposal Review"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-04-16 21:38:48.469097",
+  "name": "Archived",
+  "style": "",
+  "workflow_state_name": "Archived"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
   "modified": "2026-04-16 21:25:25.735932",
   "name": "Rejected",
   "style": "",
@@ -12,19 +57,10 @@
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
-  "modified": "2026-04-16 21:25:36.320718",
-  "name": "Cancelled",
-  "style": "",
-  "workflow_state_name": "Cancelled"
- },
- {
-  "docstatus": 0,
-  "doctype": "Workflow State",
-  "icon": "",
-  "modified": "2026-04-16 21:34:44.073782",
-  "name": "Review 1 level",
-  "style": "",
-  "workflow_state_name": "Review 1 level"
+  "modified": "2026-04-20 13:40:56.342475",
+  "name": "In Progress",
+  "style": "Success",
+  "workflow_state_name": "In Progress"
  },
  {
   "docstatus": 0,
@@ -48,18 +84,9 @@
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
-  "modified": "2026-04-16 21:38:48.469097",
-  "name": "Archived",
+  "modified": "2026-04-16 21:34:44.073782",
+  "name": "Review 1 level",
   "style": "",
-  "workflow_state_name": "Archived"
- },
- {
-  "docstatus": 0,
-  "doctype": "Workflow State",
-  "icon": "ok-sign",
-  "modified": "2026-03-30 23:40:37.240539",
-  "name": "Approved",
-  "style": "Success",
-  "workflow_state_name": "Approved"
+  "workflow_state_name": "Review 1 level"
  }
 ]

@@ -40,7 +40,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Status",
-   "options": "Draft\nUnder Director Review\nUnder CEO Review\nApproved\nRejected\nCancelled\nArchived"
+   "options": "Review 2 level\nRejected\nDraft\nArchived\nIn Progress\nApproved\nReview 1 level\nCancelled\nPrapare"
   },
   {
    "fieldname": "amended_from",

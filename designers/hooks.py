@@ -26,6 +26,12 @@ has_permission = {
 	"Commercial Proposal": "designers.permissions.commercial_proposal.has_permission",
 }
 
+# Allow deleting linked Tender Request/Commercial Proposal without deadlock.
+ignore_links_on_delete = [
+	"Tender Request",
+	"Commercial Proposal",
+]
+
 scheduler_events = {
 	"daily": [
 		"designers.tasks.check_deadlines",

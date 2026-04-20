@@ -26,7 +26,7 @@
   "access_section",
   "access_users",
   "budget_version",
-  "tender_budget_request",
+  "proposal_version",
   "commercial_proposal",
   "rejection_reason",
   "files"
@@ -99,7 +99,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Status",
-   "options": "New Request\nIn Progress\nUnder Review\nRejected\nCancelled\nBudget Drafting\nBudget Director Review\nBudget CEO Review\nBudget Approved\nProposal Drafting\nProposal Review\nProposal Approved\nSent to Client\nArchived"
+   "options": "Draft\nNew Request\nIn Progress\nUnder Review\nReview 1 level\nReview 2 level\nApproved\nRejected\nCancelled\nBudget Drafting\nBudget Director Review\nBudget CEO Review\nBudget Approved\nProposal Drafting\nProposal Review\nProposal Approved\nSent to Client\nArchived"
   },
   {
    "fieldname": "assigned_to",
@@ -137,10 +137,10 @@
    "read_only": 1
   },
   {
-   "fieldname": "tender_budget_request",
-   "fieldtype": "Link",
-   "label": "Tender Budget Request",
-   "options": "Tender Budget",
+   "default": "0",
+   "fieldname": "proposal_version",
+   "fieldtype": "Int",
+   "label": "Proposal Version",
    "read_only": 1
   },
   {

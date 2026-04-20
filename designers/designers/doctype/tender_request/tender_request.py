@@ -49,10 +49,10 @@ class TenderRequest(Document):
         if not self.name:
             return
 
-        latest_budget = frappe.db.get_value(
+        latest_budget_version = frappe.db.get_value(
             "Tender Budget",
             {"tender_request": self.name},
-            "name",
+            "version",
             order_by="creation desc",
         )
         latest_proposal = frappe.db.get_value(
@@ -62,8 +62,8 @@ class TenderRequest(Document):
             order_by="creation desc",
         )
 
-        if latest_budget and self.get("tender_budget_request") != latest_budget:
-            self.tender_budget_request = latest_budget
+        if latest_budget_version and self.get("budget_version") != latest_budget_version:
+            self.budget_version = latest_budget_version
         if latest_proposal and self.get("commercial_proposal") != latest_proposal:
             self.commercial_proposal = latest_proposal
 
@@ -71,14 +71,19 @@ class TenderRequest(Document):
         if (self.status or "").strip() != "Approved":
             return
 
-        budget_name = self.get("tender_budget_request")
+        budget_name = frappe.db.get_value(
+            "Tender Budget",
+            {"tender_request": self.name},
+            "name",
+            order_by="creation desc",
+        )
         proposal_name = self.get("commercial_proposal")
 
         missing = []
         not_approved = []
 
         if not budget_name:
-            missing.append("Tender Budget Request")
+            missing.append("Tender Budget")
         if not proposal_name:
             missing.append("Commercial Proposal")
 
@@ -86,7 +91,7 @@ class TenderRequest(Document):
             budget_status = frappe.db.get_value("Tender Budget", budget_name, "status")
             if (budget_status or "").strip().lower() != "approved":
                 not_approved.append(
-                    f"Tender Budget Request ({budget_name}) = {budget_status or 'Пусто'}"
+                    f"Tender Budget ({budget_name}) = {budget_status or 'Пусто'}"
                 )
 
         if proposal_name:
@@ -169,6 +174,20 @@ class TenderRequest(Document):
     def after_insert(self):
         # Project name/folder are created when workflow moves to Start Work (In Progress).
         pass
+
+    def on_trash(self):
+        # Break circular link so Commercial Proposal can be deleted independently.
+        proposal_name = self.get("commercial_proposal")
+        if proposal_name and frappe.db.exists("Commercial Proposal", proposal_name):
+            current_parent = frappe.db.get_value("Commercial Proposal", proposal_name, "tender_request")
+            if current_parent == self.name:
+                frappe.db.set_value(
+                    "Commercial Proposal",
+                    proposal_name,
+                    "tender_request",
+                    None,
+                    update_modified=False,
+                )
 
     def on_update(self):
         if self.flags.get("create_project_structure_on_update"):
@@ -375,12 +394,12 @@ def get_action_visibility(tender_request: str):
         ),
         "approve_director": (
             latest_budget is not None
-            and latest_budget.status == "Under Director Review"
+            and latest_budget.status == "Review 1 level"
             and _has_workflow_action(latest_budget, "Согласовать бюджет")
         ),
         "approve_budget": (
             latest_budget is not None
-            and latest_budget.status == "Under CEO Review"
+            and latest_budget.status == "Review 2 level"
             and _has_workflow_action(latest_budget, "Согласовать бюджет")
         ),
         "create_proposal": can_create_proposal,
@@ -391,7 +410,7 @@ def get_action_visibility(tender_request: str):
         ),
         "approve_proposal": (
             latest_proposal is not None
-            and latest_proposal.status == "Under Approval"
+            and latest_proposal.status == "Review 1 level"
             and _has_workflow_action(latest_proposal, "Согласовать КП")
         ),
         "send_to_admin": (
@@ -401,12 +420,12 @@ def get_action_visibility(tender_request: str):
         ),
         "approve_by_admin": (
             latest_proposal is not None
-            and latest_proposal.status == "Admin Review"
+            and latest_proposal.status == "Review 2 level"
             and _has_workflow_action(latest_proposal, "КП на согласование")
         ),
         "send_to_client": (
             latest_proposal is not None
-            and latest_proposal.status == "Admin Approved"
+            and latest_proposal.status == "Approved"
             and _has_workflow_action(latest_proposal, "Отправить КП клиенту")
         ),
     }
@@ -518,12 +537,12 @@ def approve_proposal_by_admin(tender_request: str):
 def send_to_client(tender_request: str):
     proposal = frappe.db.get_value(
         "Commercial Proposal",
-        {"tender_request": tender_request, "status": "Admin Approved"},
+        {"tender_request": tender_request, "status": "Approved"},
         "name",
         order_by="creation desc",
     )
     if not proposal:
-        frappe.throw("Сначала завершите админ-согласование Commercial Proposal (status = Admin Approved)")
+        frappe.throw("Сначала согласуйте Commercial Proposal (status = Approved)")
 
     from designers.designers.doctype.commercial_proposal.commercial_proposal import send_to_client as send_proposal
 

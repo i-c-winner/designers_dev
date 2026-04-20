@@ -8,12 +8,9 @@
 		".sidebar-notification",
 	];
 	const BADGE_CLASS = "designers-notification-badge";
-	const DECREASE_DELAY_MS = 1200;
+	const POLL_MS = 3000;
+	let pollTimer = null;
 	let refreshInFlight = false;
-	let lastRefreshAt = 0;
-	const MIN_REFRESH_GAP_MS = 800;
-	let lastRenderedCount = 0;
-	let decreaseTimer = null;
 
 	function fetchLiveNotifications(limit) {
 		return frappe.call({
@@ -40,48 +37,23 @@
 		const safeCount = Math.max(0, Number(count) || 0);
 		badge.textContent = safeCount > 9 ? "9+" : String(safeCount);
 		badge.classList.toggle("hidden", safeCount === 0);
-		lastRenderedCount = safeCount;
-	}
-
-	function renderCountStable(nextCount) {
-		const safeNext = Math.max(0, Number(nextCount) || 0);
-		if (safeNext >= lastRenderedCount) {
-			if (decreaseTimer) {
-				clearTimeout(decreaseTimer);
-				decreaseTimer = null;
-			}
-			renderCount(safeNext);
-			return;
-		}
-		if (decreaseTimer) clearTimeout(decreaseTimer);
-		decreaseTimer = setTimeout(() => {
-			renderCount(safeNext);
-			decreaseTimer = null;
-		}, DECREASE_DELAY_MS);
 	}
 
 	function isRead(row) {
 		const raw = row?.read;
 		if (raw === true || raw === 1 || raw === "1") return true;
-		if (typeof raw === "string") {
-			const v = raw.trim().toLowerCase();
-			if (v === "true" || v === "yes" || v === "y") return true;
-		}
 		return false;
 	}
 
 	function refreshFromServer() {
 		if (!window.frappe || !frappe.call || frappe.session?.user === "Guest") return;
 		if (refreshInFlight) return;
-		const now = Date.now();
-		if (now - lastRefreshAt < MIN_REFRESH_GAP_MS) return;
-		lastRefreshAt = now;
 		refreshInFlight = true;
 		fetchLiveNotifications(100)
 			.then((r) => {
 				const logs = r?.message?.notification_logs || [];
 				const unread = logs.reduce((acc, row) => acc + (isRead(row) ? 0 : 1), 0);
-				renderCountStable(unread);
+				renderCount(unread);
 				refreshInFlight = false;
 			})
 			.catch((err) => {
@@ -93,8 +65,36 @@
 	}
 
 	function refreshFastThenServer() {
-		// Only update badge count to avoid interfering with native dropdown rendering.
+		// Keep server as a single source of truth to avoid flicker during dropdown rerenders.
 		refreshFromServer();
+		syncDropdownList();
+	}
+
+	function getNotificationsView() {
+		return frappe?.app?.sidebar?.notifications?.tabs?.notifications || null;
+	}
+
+	function isDropdownOpen() {
+		const dropdown = document.querySelector(".dropdown-notifications");
+		return !!dropdown && !dropdown.classList.contains("hidden");
+	}
+
+	function syncDropdownList() {
+		if (!window.frappe || frappe.session?.user === "Guest") return;
+		if (!isDropdownOpen()) return;
+		const view = getNotificationsView();
+		if (!view) return;
+
+		fetchLiveNotifications(view.max_length || 20).then((r) => {
+			if (!r?.message) return;
+			view.dropdown_items = r.message.notification_logs || [];
+			if (typeof frappe.update_user_info === "function") {
+				frappe.update_user_info(r.message.user_info || {});
+			}
+			if (typeof view.render_notifications_dropdown === "function") {
+				view.render_notifications_dropdown();
+			}
+		});
 	}
 
 	function bindRealtime() {
@@ -106,6 +106,16 @@
 		window.__designersBadgeRealtimeBound = true;
 
 		frappe.realtime.on("notification", refreshFastThenServer);
+		frappe.realtime.on("indicator_hide", refreshFastThenServer);
+	}
+
+	function startPolling() {
+		if (pollTimer) return;
+		pollTimer = setInterval(() => {
+			if (document.hidden) return;
+			refreshFromServer();
+			syncDropdownList();
+		}, POLL_MS);
 	}
 
 	function bindUIActions() {
@@ -115,7 +125,8 @@
 		document.addEventListener("click", (e) => {
 			if (
 				e.target.closest(".mark-all-read") ||
-				e.target.closest(".notification-item")
+				e.target.closest(".notification-item") ||
+				e.target.closest(".sidebar-notification")
 			) {
 				setTimeout(refreshFastThenServer, 50);
 			}
@@ -129,6 +140,7 @@
 	function initTick() {
 		getBadgeContainer();
 		bindRealtime();
+		startPolling();
 		refreshFastThenServer();
 	}
 

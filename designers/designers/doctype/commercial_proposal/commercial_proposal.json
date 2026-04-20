@@ -7,6 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "tender_request",
+  "tender_budget",
   "version",
   "status",
   "amended_from",
@@ -25,6 +26,13 @@
    "reqd": 1
   },
   {
+   "fieldname": "tender_budget",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Tender Budget",
+   "options": "Tender Budget"
+  },
+  {
    "allow_in_quick_entry": 1,
    "fieldname": "version",
    "fieldtype": "Int",
@@ -38,7 +46,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Status",
-   "options": "Draft\nUnder Approval\nApproved\nAdmin Review\nAdmin Approved\nSent\nRejected\nCancelled\nArchived"
+   "options": "Review 2 level\nRejected\nDraft\nArchived\nIn Progress\nApproved\nReview 1 level\nCancelled\nPrapare"
   },
   {
    "fieldname": "amended_from",
