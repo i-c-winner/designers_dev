@@ -40,8 +40,69 @@ class TenderRequest(Document):
     def validate(self):
         if self.contact_phone and not PHONE_REGEX.fullmatch(self.contact_phone.strip()):
             frappe.throw(PHONE_HINT)
+        self._sync_nested_docs_links()
+        self._validate_approved_dependencies()
         self._prepare_start_work_transition()
         self._validate_locked_fields_after_first_action()
+
+    def _sync_nested_docs_links(self):
+        if not self.name:
+            return
+
+        latest_budget = frappe.db.get_value(
+            "Tender Budget",
+            {"tender_request": self.name},
+            "name",
+            order_by="creation desc",
+        )
+        latest_proposal = frappe.db.get_value(
+            "Commercial Proposal",
+            {"tender_request": self.name},
+            "name",
+            order_by="creation desc",
+        )
+
+        if latest_budget and self.get("tender_budget_request") != latest_budget:
+            self.tender_budget_request = latest_budget
+        if latest_proposal and self.get("commercial_proposal") != latest_proposal:
+            self.commercial_proposal = latest_proposal
+
+    def _validate_approved_dependencies(self):
+        if (self.status or "").strip() != "Approved":
+            return
+
+        budget_name = self.get("tender_budget_request")
+        proposal_name = self.get("commercial_proposal")
+
+        missing = []
+        not_approved = []
+
+        if not budget_name:
+            missing.append("Tender Budget Request")
+        if not proposal_name:
+            missing.append("Commercial Proposal")
+
+        if budget_name:
+            budget_status = frappe.db.get_value("Tender Budget", budget_name, "status")
+            if (budget_status or "").strip().lower() != "approved":
+                not_approved.append(
+                    f"Tender Budget Request ({budget_name}) = {budget_status or 'Пусто'}"
+                )
+
+        if proposal_name:
+            proposal_status = frappe.db.get_value("Commercial Proposal", proposal_name, "status")
+            if (proposal_status or "").strip().lower() != "approved":
+                not_approved.append(
+                    f"Commercial Proposal ({proposal_name}) = {proposal_status or 'Пусто'}"
+                )
+
+        if missing or not_approved:
+            parts = []
+            if missing:
+                parts.append("Не заполнены связанные документы: " + ", ".join(missing))
+            if not_approved:
+                parts.append("Статусы должны быть Approved: " + "; ".join(not_approved))
+            frappe.throw(". ".join(parts))
 
     def _prepare_start_work_transition(self):
         previous = self.get_doc_before_save()

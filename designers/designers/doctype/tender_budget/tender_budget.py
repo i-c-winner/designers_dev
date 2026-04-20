@@ -122,6 +122,7 @@ class TenderBudget(Document):
 
         if self.tender_request:
             frappe.db.set_value("Tender Request", self.tender_request, "budget_version", self.version, update_modified=False)
+            frappe.db.set_value("Tender Request", self.tender_request, "tender_budget_request", self.name, update_modified=False)
             parent_status = self.PARENT_STATUS_BY_BUDGET_STATUS.get(self.status)
             if parent_status:
                 frappe.db.set_value("Tender Request", self.tender_request, "status", parent_status, update_modified=False)

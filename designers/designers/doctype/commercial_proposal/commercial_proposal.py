@@ -117,6 +117,7 @@ class CommercialProposal(Document):
                 self._archive_previous_versions()
 
         parent_status = self.PARENT_STATUS_BY_PROPOSAL_STATUS.get(self.status)
+        frappe.db.set_value("Tender Request", self.tender_request, "commercial_proposal", self.name, update_modified=False)
         if parent_status:
             frappe.db.set_value("Tender Request", self.tender_request, "status", parent_status, update_modified=False)
 

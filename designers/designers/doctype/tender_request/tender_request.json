@@ -26,6 +26,8 @@
   "access_section",
   "access_users",
   "budget_version",
+  "tender_budget_request",
+  "commercial_proposal",
   "rejection_reason",
   "files"
  ],
@@ -132,6 +134,20 @@
    "fieldname": "budget_version",
    "fieldtype": "Int",
    "label": "Budget Version",
+   "read_only": 1
+  },
+  {
+   "fieldname": "tender_budget_request",
+   "fieldtype": "Link",
+   "label": "Tender Budget Request",
+   "options": "Tender Budget",
+   "read_only": 1
+  },
+  {
+   "fieldname": "commercial_proposal",
+   "fieldtype": "Link",
+   "label": "Commercial Proposal",
+   "options": "Commercial Proposal",
    "read_only": 1
   },
   {
