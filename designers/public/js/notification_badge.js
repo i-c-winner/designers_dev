@@ -9,11 +9,13 @@
 	];
 	const BADGE_CLASS = "designers-notification-badge";
 	const DECREASE_DELAY_MS = 1200;
+	const POLL_MS = 15000;
 	let refreshInFlight = false;
 	let lastRefreshAt = 0;
 	const MIN_REFRESH_GAP_MS = 800;
 	let lastRenderedCount = 0;
 	let decreaseTimer = null;
+	let pollTimer = null;
 
 	function fetchLiveNotifications(limit) {
 		return frappe.call({
@@ -115,9 +117,10 @@
 		document.addEventListener("click", (e) => {
 			if (
 				e.target.closest(".mark-all-read") ||
-				e.target.closest(".notification-item")
+				e.target.closest(".notification-item") ||
+				e.target.closest(".sidebar-notification")
 			) {
-				setTimeout(refreshFastThenServer, 50);
+				setTimeout(refreshFastThenServer, 120);
 			}
 		});
 
@@ -126,9 +129,18 @@
 		});
 	}
 
+	function startPolling() {
+		if (pollTimer) return;
+		pollTimer = setInterval(() => {
+			if (document.hidden) return;
+			refreshFromServer();
+		}, POLL_MS);
+	}
+
 	function initTick() {
 		getBadgeContainer();
 		bindRealtime();
+		startPolling();
 		refreshFastThenServer();
 	}
 
