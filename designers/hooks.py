@@ -7,8 +7,8 @@ app_license = "mit"
 
 required_apps = ["frappe"]
 
-app_include_js = ["/assets/designers/js/notification_badge.js"]
-app_include_css = ["/assets/designers/css/notification_badge.css"]
+# app_include_js = ["/assets/designers/js/notification_badge.js"]
+# app_include_css = ["/assets/designers/css/notification_badge.css"]
 
 doctype_js = {
 	"Tender Request": "public/js/tender_request.js",
