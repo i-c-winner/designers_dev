@@ -6,6 +6,7 @@
 		".standard-items-sections .sidebar-notification .item-anchor",
 		".sidebar-notification .item-anchor",
 		".sidebar-notification",
+		".notifications-icon",
 	];
 	const BADGE_CLASS = "designers-notification-badge";
 	const DECREASE_DELAY_MS = 1200;
@@ -82,7 +83,14 @@
 		fetchLiveNotifications(100)
 			.then((r) => {
 				const logs = r?.message?.notification_logs || [];
-				const unread = logs.reduce((acc, row) => acc + (isRead(row) ? 0 : 1), 0);
+				let unread = logs.reduce((acc, row) => acc + (isRead(row) ? 0 : 1), 0);
+				// Fallback to Frappe's native unseen indicator.
+				if (!unread) {
+					const unseenEl = document.querySelector(".notifications-icon .notifications-unseen");
+					if (unseenEl && unseenEl.offsetParent !== null) {
+						unread = 1;
+					}
+				}
 				renderCountStable(unread);
 				refreshInFlight = false;
 			})
