@@ -4,11 +4,12 @@ app_publisher = "Dmitriy"
 app_description = "Designers custom app"
 app_email = "dmitriy@example.com"
 app_license = "mit"
+app_logo_url = "/assets/frappe/images/frappe-framework-logo.svg"
 
 required_apps = ["frappe"]
 
-# app_include_js = ["/assets/designers/js/notification_badge.js"]
-# app_include_css = ["/assets/designers/css/notification_badge.css"]
+app_include_js = ["/assets/designers/js/notification_bell_fix.js"]
+app_include_css = ["/assets/designers/css/notification_bell_fix.css"]
 
 doctype_js = {
 	"Tender Request": "public/js/tender_request.js",
@@ -103,7 +104,7 @@ fixtures = [
 ]
 
 override_whitelisted_methods = {
-	"frappe.handler.upload_file": "designers.upload.restricted_upload_file"
+	"frappe.handler.upload_file": "designers.upload.restricted_upload_file",
 }
 
 jinja = {
